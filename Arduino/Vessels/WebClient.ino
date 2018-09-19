@@ -1,23 +1,10 @@
 WebClient::WebClient() {}
 
-void WebClient::setup( String file ) {
-  Serial.println(F("SETUP WEB CLIENT..."));
-  id = sdcard.read( file, F("NAME"));
-  token = sdcard.read( file, F("TOKEN")).toInt();
-  host = sdcard.read( file, F("URL"));
-  port = sdcard.read( file, F("PORT")).toInt();
-  context = sdcard.read( file, F("CONTEXT"));
-  String server_addr = sdcard.read( file, F("SERVER"));
-  server.fromString( server_addr);
-  Serial.print(F("SERVER ADDRESS:")); server.printTo( Serial );
-  Serial.println();
-  String ip_addr = sdcard.read( file, F("IP"));
-  ip.fromString( ip_addr);
-  Serial.print(F("IP ADDRESS:")); server.printTo( Serial );
+void WebClient::setup() {
 
-  String mc = sdcard.read( file, F("MAC"));
-  sdcard.toByteArray( mac, mc, 16);
-  Serial.print(F("CONNECTING TO ")); Serial.print( host ); Serial.print(F(":")); Serial.print( port ); Serial.println( context );
+  host = CONDAST_URL;
+  port = PORT;
+  context = AQUABOTS_CONTEXT;
 
   // start the Ethernet connection:
   Serial.println(F("SETUP WEB CLIENT "));
@@ -26,11 +13,11 @@ void WebClient::setup( String file ) {
     // try to congifure using IP address instead of DHCP:
     Ethernet.begin(mac, ip);
   }
-  connected = false;
-
   // give the Ethernet shield a second to initialize:
+  Serial.println(F("WEB CLIENT..."));
   delay(1000);
-  Serial.println( F("done"));
+  Serial.println(F("connecting..."));
+  connect();
 }
 
 bool WebClient::connect() {

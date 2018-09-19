@@ -12,7 +12,7 @@ class Registration {
 
   public: Registration(void);
     void setup();
-    long registerVessel( String name, String passphrase);
+    long registerVessel( String name, String passphrase, double latitude, double longitude );
     bool getConfig();
 };
 

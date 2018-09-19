@@ -5,7 +5,7 @@ void Registration::setup( ) {
   enabled = true;
 }
 
-long Registration::registerVessel( String name, String passphrase ) {
+long Registration::registerVessel( String name, String passphrase, double latitude, double longitude ) {
   if ( !enabled )
     return;
   if ( ! webClient.connect() )
@@ -15,6 +15,10 @@ long Registration::registerVessel( String name, String passphrase ) {
   url += String( name );
   url += F("&passphrase=");
   url += String( passphrase);
+  url += F("&latitude=");
+  url += String( latitude);
+  url += F("&longitude=");
+  url += String( longitude);
 
   boolean result = webClient.sendHttp( WebClient::REGISTER_VESSEL, false, url);
   if (!result ) {
