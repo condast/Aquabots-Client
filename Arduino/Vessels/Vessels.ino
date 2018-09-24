@@ -1,11 +1,9 @@
 #include <ArduinoJson.h>
 
 #include "WebClient.h"
-#include "SDCard.h"
 #include "Registration.h"
 
 WebClient webClient;
-SDCard sdcard;
 Registration registration;
 
 void setup() {

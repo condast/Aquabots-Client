@@ -16,8 +16,7 @@ void WebClient::setup( ) {
   Serial.print(F("IP ADDRESS:")); server.printTo( Serial );
 
   String mc = "{0x90,0xA2,0xDA,0x11,0x12,0x3A}";
-  sdcard.toByteArray( mac, mc, 16);
-  Serial.print(F("CONNECTING TO ")); Serial.print( host ); Serial.print(F(":")); Serial.print( port ); Serial.println( context );
+   Serial.print(F("CONNECTING TO ")); Serial.print( host ); Serial.print(F(":")); Serial.print( port ); Serial.println( context );
 
   // start the Ethernet connection:
   Serial.println(F("SETUP WEB CLIENT "));
