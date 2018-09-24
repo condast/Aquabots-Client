@@ -1,10 +1,23 @@
 WebClient::WebClient() {}
 
-void WebClient::setup() {
+void WebClient::setup( ) {
+  Serial.println(F("SETUP WEB CLIENT..."));
+  id = "AquaBoat";
+  token = "AquaPassphrase";
+  host = "http://www.condast.com";
+  port = 10081;
+  context = "/arnac/registration/";
+  String server_addr = "192.168.8.102"; //Aquabots Client IP Address
+  server.fromString( server_addr);
+  Serial.print(F("SERVER ADDRESS:")); server.printTo( Serial );
+  Serial.println();
+  String ip_addr = "192.168.8.102";
+  ip.fromString( ip_addr);
+  Serial.print(F("IP ADDRESS:")); server.printTo( Serial );
 
-  host = CONDAST_URL;
-  port = PORT;
-  context = AQUABOTS_CONTEXT;
+  String mc = "{0x90,0xA2,0xDA,0x11,0x12,0x3A}";
+  sdcard.toByteArray( mac, mc, 16);
+  Serial.print(F("CONNECTING TO ")); Serial.print( host ); Serial.print(F(":")); Serial.print( port ); Serial.println( context );
 
   // start the Ethernet connection:
   Serial.println(F("SETUP WEB CLIENT "));
@@ -13,11 +26,11 @@ void WebClient::setup() {
     // try to congifure using IP address instead of DHCP:
     Ethernet.begin(mac, ip);
   }
+  connected = false;
+
   // give the Ethernet shield a second to initialize:
-  Serial.println(F("WEB CLIENT..."));
   delay(1000);
-  Serial.println(F("connecting..."));
-  connect();
+  Serial.println( F("done"));
 }
 
 bool WebClient::connect() {
@@ -138,12 +151,13 @@ boolean WebClient::sendHttp( int request, String message ) {
 boolean WebClient::sendHttp( int request, boolean post, String attrs ) {
   if ( client.connected()) {
     if( request != NMEA )
-      Serial.print(F("REQUEST ")); logRequestStr( request ); Serial.print(F(" ")); Serial.println(attrs );
+      Serial.print(F("REQUEST ")); logRequestStr( request ); Serial.print(F(": ")); Serial.println(attrs );
     //logRequest( request, post, attrs );
 
     // Make a HTTP request:
     client.print( post ? F("POST ") : F("GET ") );
     client.print( context );
+    Serial.print( context );//Serial.print( register);
     requestService( request );
     client.print(F("?id=" ));
     client.print( id );

@@ -1,15 +1,14 @@
 Registration::Registration() {};
 
-//Repeatedly feed it characters from your
 void Registration::setup( ) {
   enabled = true;
 }
 
 long Registration::registerVessel( String name, String passphrase, double latitude, double longitude ) {
   if ( !enabled )
-    return;
+    return -1;
   if ( ! webClient.connect() )
-    return false;
+    return -2;
 
   String url = F("&name=");
   url += String( name );
@@ -23,13 +22,14 @@ long Registration::registerVessel( String name, String passphrase, double latitu
   boolean result = webClient.sendHttp( WebClient::REGISTER_VESSEL, false, url);
   if (!result ) {
     webClient.disconnect();
-    return false;
+    return -3;
   }
   String retval = "";
   while (webClient.client.available()) {
     char c = webClient.client.read();
     retval += c;
   }
+  Serial.println( retval);
   vesselId = atol( retval.c_str() );
   webClient.disconnect();
   return vesselId;
