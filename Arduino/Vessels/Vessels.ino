@@ -24,9 +24,9 @@ void setup() {
 }
 
 void loop() {
-  long vesselId =  registration.registerVessel( VESSEL, PASSPHRASE, LATITUDE, LONGITUDE );
+  tinyGPS.loop();
+  long vesselId =  registration.registerVessel( VESSEL, PASSPHRASE, tinyGPS.getLatitude(), tinyGPS.getLongitude() );
   if ( vesselId >= 0 )
     Serial.print(F("VESSEL: ")); Serial.println( vesselId );
   delay(1000);
-  tinyGPS.loop();
 }

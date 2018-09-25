@@ -23,6 +23,8 @@ class TinyGPS {
   public: TinyGPS(void);
     void setup();
     double getBearing();
+    double getLatitude();
+    double getLongitude();
     double getBearing( double latFrom, double lonFrom, double latTo, double lonTo );
     double getDistance( double latFrom, double lonFrom, double latTo, double lonTo );
     bool wait();//wait for processing of the nmea sentence

@@ -15,6 +15,13 @@ double TinyGPS::getBearing() {
   return bearing;
 }
 
+double TinyGPS::getLatitude() {
+  return latitude;
+}
+
+double TinyGPS::getLongitude() {
+  return longitude;
+}
 /*
 void TinyGPS:: sendNMEA() {
   if ( !complete )
