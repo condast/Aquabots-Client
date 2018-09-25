@@ -59,12 +59,13 @@ void TinyGPS::loop() {
     updated = gps.location.isUpdated();
     if ( updated ) {
 
+      latitude = gps.location.lat();
+      longitude = gps.location.lng();
+      bearing = gps.course.deg();
+      speed = gps.speed.mps();
       Serial.print(F("\n\nGPS Location Updated: "));
       Serial.print( latitude, 6 ); Serial.print("E ");
       Serial.print( longitude, 6 ), Serial.println("N\n\n "); // bearing, speed );
-      latitude = gps.location.lat();
-      bearing = gps.course.deg();
-      speed = gps.speed.mps();
       break;
     }
     //sendNMEA();

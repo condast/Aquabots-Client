@@ -4,8 +4,8 @@
 #include "Registration.h"
 #include "TinyGPS.h"
 
-#define VESSEL F("Costa")
-#define PASSPHRASE F("HetIsWelGoed")
+#define VESSEL F("AquaBoat")
+#define PASSPHRASE F("AquaPassphrase")
 #define LATITUDE 51.2
 #define LONGITUDE 4.2
 #define TIME_OUT 300 //msec
@@ -24,7 +24,9 @@ void setup() {
 }
 
 void loop() {
-  registration.registerVessel( VESSEL, PASSPHRASE, LATITUDE, LONGITUDE );
+  long vesselId =  registration.registerVessel( VESSEL, PASSPHRASE, LATITUDE, LONGITUDE );
+  if ( vesselId >= 0 )
+    Serial.print(F("VESSEL: ")); Serial.println( vesselId );
   delay(1000);
   tinyGPS.loop();
 }
