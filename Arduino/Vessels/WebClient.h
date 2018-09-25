@@ -4,7 +4,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 
-#define AQUABOTS_CONTEXT "/arnac/registration/";
+#define AQUABOTS_CONTEXT "/arnac/registration/"
 #define CONDAST_URL "www.condast.com"
 
 const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server

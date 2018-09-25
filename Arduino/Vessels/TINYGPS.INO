@@ -54,7 +54,7 @@ void TinyGPS::loop() {
   while (Serial1.available() && ( millis() < ( current + TIME_OUT  ))) {
     char chr = Serial1.read();
     //readNMEA( chr );
-    Serial.print(chr );
+    //Serial.print(chr );
     gps.encode( chr );
     updated = gps.location.isUpdated();
     if ( updated ) {
@@ -63,7 +63,6 @@ void TinyGPS::loop() {
       Serial.print( latitude, 6 ); Serial.print("E ");
       Serial.print( longitude, 6 ), Serial.println("N\n\n "); // bearing, speed );
       latitude = gps.location.lat();
-      longitude = gps.location.lng();
       bearing = gps.course.deg();
       speed = gps.speed.mps();
       break;

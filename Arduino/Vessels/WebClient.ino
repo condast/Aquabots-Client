@@ -7,7 +7,7 @@ void WebClient::setup() {
   context = AQUABOTS_CONTEXT;
 
   // start the Ethernet connection:
-  Serial.println(F("SETUP WEB CLIENT "));
+  Serial.println(F("SETUP WEB CLIENT... "));
   if (Ethernet.begin(mac) == 0) {
     Serial.println(F("Failed to configure Ethernet using DHCP"));
     // try to congifure using IP address instead of DHCP:
