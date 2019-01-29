@@ -21,16 +21,17 @@ void WebClient::setup() {
 }
 
 bool WebClient::connect() {
-  //Serial.print(F("Connecting to: ")); Serial.print( server ); Serial.print(F(":")); Serial.println( port );
+  Serial.print(F("Connecting to: ")); Serial.print( server ); Serial.print(F(":")); Serial.println( port );
   client.setTimeout(3000);
   bool result = client.connect(server, port);
-  //Serial.print(F("Connected: ")); Serial.println( result );
   if ( result) {
+    Serial.println(F("Connected! "));
     connected = result;
     return result;
   }
   //if ( connected )
-  //  Serial.print(F("Connection failed: ")); Serial.println( result );
+  
+  Serial.print(F("Connection failed: ")); Serial.println( result );
   client.stop();
 }
 
@@ -144,6 +145,7 @@ boolean WebClient::sendHttp( int request, boolean post, String attrs ) {
     // Make a HTTP request:
     client.print( post ? F("POST ") : F("GET ") );
     client.print( context );
+    Serial.print(F("contecxt: ")); Serial.print( context );
     requestService( request );
     client.print(F("?id=" ));
     client.print( id );

@@ -46,9 +46,10 @@ const int PORT = 8080;
 //IPAddress ip(192,168,8,100);
 //const int PORT = 10081;
 
-//RH Marine Werkplaats
-//IPAddress server(192, 168, 10, 100);
-//IPAddress ip(192, 168, 10, 100);
+//Havenlab
+//IPAddress server(192,168,10,110);
+//IPAddress ip(192,168,10,110);
+//const int PORT = 10080;
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield

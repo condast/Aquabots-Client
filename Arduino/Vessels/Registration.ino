@@ -4,14 +4,15 @@ void Registration::setup( ) {
   enabled = true;
 }
 
-long Registration::registerVessel( String name, String passphrase, double latitude, double longitude ) {
+long Registration::registerVessel( String vesselName, String passphrase, double latitude, double longitude ) {
   if ( !enabled )
     return -1;
-  if ( ! webClient.connect() )
+  if ( !webClient.connect() )
     return -2;
 
+  Serial.print(F("Registering Vessel: ")); Serial.println( vesselName );
   String url = F("&name=");
-  url += String( name );
+  url += String( vesselName );
   url += F("&passphrase=");
   url += String( passphrase);
   url += F("&latitude=");
@@ -32,6 +33,7 @@ long Registration::registerVessel( String name, String passphrase, double latitu
   Serial.println( retval);
   vesselId = atol( retval.c_str() );
   webClient.disconnect();
+  Serial.print(F("Vessel Registered: ")); Serial.println( vesselId );
   return vesselId;
 }
 

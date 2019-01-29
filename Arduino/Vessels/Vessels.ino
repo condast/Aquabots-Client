@@ -13,7 +13,7 @@
 #define LONGITUDE 4.2
 #define TIME_OUT 300 //msec
 
-SoftwareSerial Serial1(2, 3); // RX, TX
+//SoftwareSerial Serial1(2, 3); // RX, TX
 WebClient webClient;
 Registration registration;
 TinyGPS tinyGPS;
@@ -37,6 +37,7 @@ void loop() {
   tinyGPS.loop();
   if ( vesselId < 0 ) {
     vesselId =  registration.registerVessel( VESSEL, PASSPHRASE, tinyGPS.getLatitude(), tinyGPS.getLongitude() );
+    Serial.print(F("REGISTRATION FAILED: ")); Serial.println( vesselId );
   } else {
     Serial.print(F("VESSEL: ")); Serial.println( vesselId );
     vessel.loop( tinyGPS.getBearing());
