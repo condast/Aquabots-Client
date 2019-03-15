@@ -4,8 +4,8 @@
 #include <SPI.h>
 #include <Ethernet.h>
 
-#define AQUABOTS_CONTEXT "/arnac/registration/"
-#define CONDAST_URL "www.condast.com"
+#define AQUABOTS_CONTEXT F("/arnac/registration/")
+#define CONDAST_URL F("www.condast.com")
 
 const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
 
@@ -25,21 +25,17 @@ const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
 
 */
 
-//SERVER
+//Condast SERVER
 // Set the static IP address to use if the DHCP fails to assign
-IPAddress server(79, 170, 90, 5);
-IPAddress ip(79, 170, 90, 5);
-const int PORT = 8080;
+//const char server[] = "www.condast.com";
+//IPAddress ip(79, 170, 90, 5);
+//const int PORT = 8080;
 
-//De Stadstuin
-//IPAddress server(10, 30, 8, 74);
-//IPAddress ip(10, 30, 8, 74);
-//const int PORT = 10080;
-
-//Camping de Worp
-//IPAddress server(172,16,2,144);
-//IPAddress ip(172,16,2,144);
-//const int PORT = 10081;
+//LOCALHOST
+// Set the static IP address to use if the DHCP fails to assign
+IPAddress server(192, 168, 178, 21);
+IPAddress ip(192, 168, 178, 21);
+const int PORT = 10080;
 
 //Huawei
 //IPAddress server(192,168,8,100);
@@ -53,7 +49,7 @@ const int PORT = 8080;
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
-byte mac[] = { 0x90, 0xA2, 0xDA, 0x11, 0x12, 0x3A };
+const byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 
 class WebClient {
 
@@ -92,18 +88,12 @@ class WebClient {
     void loop();
 
   private:
-    //IPAddress server;
-    //IPAddress ip;
     String host;
     int port;
     bool connected;
     String context;
     String id;
     int token;
-
-    // Enter a MAC address for your controller below.
-    // Newer Ethernet shields have a MAC address printed on a sticker on the shield
-    byte mac[6] = {0};
 
     // Initialize the Ethernet client library
     // with the IP address and port of the server

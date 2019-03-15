@@ -54,7 +54,7 @@ class Vessel {
     unsigned int range;//The range in between which a location has been reached
 
     LatLng::VesselData data;
-     Waypoint waypoints[ MAX_WAYPOINTS ];
+    Waypoint waypoints[ MAX_WAYPOINTS ];
     unsigned int waypointIndex;
 
     Servo referenceServo; //The Anna uses two motors, of which this one controls the reference

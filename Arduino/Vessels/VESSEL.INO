@@ -77,12 +77,13 @@ void Vessel::setCourse( double newbearing, double thrst ) {
   Serial.print(F("\n\nCourse updated")); Serial.println( bearing);
 }
 
-Vessel::setThrust( double thrst ) {
+int Vessel::setThrust( double thrst ) {
   thrust = thrst;
   int newThrust = map( thrust, 0, 100, MIN_SERVO, MAX_SERVO );
   //Serial.print("Offset: " ); Serial.print( speed_offset );
   //Serial.print(" Thrust: " ); Serial.print( thrust ); Serial.print( " " ); Serial.println( newThrust );
   speedServo.write( speed_offset + newThrust );
+  return newThrust;
 }
 
 /**
@@ -118,18 +119,17 @@ bool Vessel::update( double latitde, double longitde, double bearing, double spe
   //Serial.print(F("\n\nBEARING: \n")); Serial.println( response);
 
   size_t capacity = JSON_OBJECT_SIZE(11) + 79;
-  DynamicJsonBuffer jsonBuffer(capacity);
-  JsonObject& root = jsonBuffer.parseObject( webClient.client );
-  if (!root.success()) {
+  DynamicJsonDocument doc(capacity);
+  DeserializationError error = deserializeJson(doc, webClient.client);
+  if (error) {
     Serial.println(F("Parsing update failed!"));
-    jsonBuffer.clear();
     webClient.disconnect();
     return false;
   }
+  JsonObject root = doc.as<JsonObject>();
   data.bearing = root["b"];
   data.thrust = root["t"];
   data.time = root["tm"];
-  jsonBuffer.clear();
   webClient.disconnect();
   setCourse( data.bearing, data.thrust);
   return true;
@@ -141,7 +141,7 @@ bool Vessel::update( double latitde, double longitde, double bearing, double spe
 */
 bool Vessel::getWaypoint() {
   if (!enable )
-    return;
+    return false;
   String url = F("&index=");
   url += String( waypointIndex++ );
   waypointIndex %= MAX_WAYPOINTS;
@@ -154,21 +154,16 @@ bool Vessel::getWaypoint() {
     return result;
   }
   size_t capacity = JSON_OBJECT_SIZE(7);
-  DynamicJsonBuffer jsonBuffer(capacity);
-
-  // Parse JSON object
-  //String buffer = webClient.printResponse( WebClient::WAYPOINTS );
-
-  JsonObject& root = jsonBuffer.parseObject( webClient.client );
-  if (!root.success()) {
-    Serial.println(F("Parsing failed!"));
-    jsonBuffer.clear();
+  DynamicJsonDocument doc(capacity);
+  DeserializationError error = deserializeJson(doc, webClient.client);
+  if (error) {
+    Serial.println(F("Parsing update failed!"));
     webClient.disconnect();
     return false;
   }
+  JsonObject root = doc.as<JsonObject>();
 
   if ( root.size() < 1 ) {
-    jsonBuffer.clear();
     webClient.disconnect();
     stop();
     return false;
@@ -183,8 +178,6 @@ bool Vessel::getWaypoint() {
   wp.complete = root["cp"];
   wp.last = root["last"];
   waypoints[index] = wp;
-
-  jsonBuffer.clear();
   webClient.disconnect();
   return true;
 }
@@ -209,19 +202,17 @@ bool Vessel::updateWaypoints( ) {
     }
 
     size_t capacity = JSON_OBJECT_SIZE(9) + 100;
-    DynamicJsonBuffer jsonBuffer(capacity);
-
-    JsonObject& root = jsonBuffer.parseObject( webClient.client );
-    if (!root.success()) {
+    DynamicJsonDocument doc(capacity);
+    DeserializationError error = deserializeJson(doc, webClient.client);
+    if (error) {
       Serial.println(F("Parsing update failed!"));
-      jsonBuffer.clear();
       webClient.disconnect();
       return false;
     }
+    JsonObject root = doc.as<JsonObject>();
     data.bearing = root["b"];
     data.thrust = root["t"];
     data.time = root["tm"];
-    jsonBuffer.clear();
     webClient.disconnect();
     result = true;
   }
@@ -246,7 +237,7 @@ void Vessel::loop( double heading) {
 }
 
 /*
-void Vessel::interrupt( unsigned int loopCounter ) {
+  void Vessel::interrupt( unsigned int loopCounter ) {
   //synchronize();
   if ( !enable || ( loopCounter < LOOP_TIMEOUT ))
     return;
@@ -258,8 +249,8 @@ void Vessel::interrupt( unsigned int loopCounter ) {
       double distance = tinyGPS.getDistance( latitude, longitude, wp.latitude, wp.longitude );
       double courseTo =   tinyGPS.getBearing( data.latitude, data.longitude, wp.latitude, wp.longitude );
       double newThrust = ( wp.last && ( distance < range ))? (thrust*distance/range): thrust;
-      setCourse( courseTo, newThrust );     
+      setCourse( courseTo, newThrust );
     }
   //getWaypoint();
-  */
+*/
 //}

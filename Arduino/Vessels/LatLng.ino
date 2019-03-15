@@ -54,6 +54,3 @@ struct LatLng::VesselData LatLng::getVesseldata( double rlat1, double rlat2, dou
   VesselData data;
   return data;
 }
-
-
-
