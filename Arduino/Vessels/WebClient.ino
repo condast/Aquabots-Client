@@ -1,37 +1,40 @@
 WebClient::WebClient() {}
 
 void WebClient::setup() {
-
   host = CONDAST_URL;
   port = PORT;
   context = AQUABOTS_CONTEXT;
 
   // start the Ethernet connection:
-  Serial.println(F("SETUP WEB CLIENT... "));
+  Serial.print(F("SETUP WEB CLIENT: ")); Serial.println( ip );
   if (Ethernet.begin(mac) == 0) {
     Serial.println(F("Failed to configure Ethernet using DHCP"));
     // try to congifure using IP address instead of DHCP:
     Ethernet.begin(mac, ip);
   }
   // give the Ethernet shield a second to initialize:
-  Serial.println(F("WEB CLIENT..."));
-  delay(1000);
+  Serial.print(F("WEB CLIENT..."));
+  delay(2000);
+  Serial.println(Ethernet.localIP());
   Serial.println(F("connecting..."));
   connect();
 }
 
 bool WebClient::connect() {
-  //Serial.print(F("Connecting to: ")); Serial.print( server ); Serial.print(F(":")); Serial.println( port );
-  client.setTimeout(3000);
-  bool result = client.connect(server, port);
+  Serial.print(F("Connecting to: ")); Serial.print( server ); Serial.print(F(":")); Serial.print( port ); Serial.print(F(" ..."));
+  //client.setTimeout(5000);
+  int result = client.connect(server, port);
   //Serial.print(F("Connected: ")); Serial.println( result );
   if ( result) {
+    //Serial.print(F("success! "));
+    //Serial.println(Ethernet.localIP());
+    //Serial.println(Ethernet.gatewayIP());
     connected = result;
     return result;
+  } else {
+    Serial.println(F("failed. "));
+    client.stop();
   }
-  //if ( connected )
-  //  Serial.print(F("Connection failed: ")); Serial.println( result );
-  client.stop();
 }
 
 void WebClient::disconnect() {
@@ -43,10 +46,10 @@ void WebClient::disconnect() {
 
 void WebClient::requestService( int request ) {
   switch ( request ) {
-     case REGISTER_VESSEL:
+    case REGISTER_VESSEL:
       client.print(F("register"));
       break;
-     case VESSEL_CONFIG:
+    case VESSEL_CONFIG:
       client.print(F("config"));
       break;
     case DEBUG:
@@ -87,10 +90,10 @@ void WebClient::requestService( int request ) {
 */
 void WebClient::logRequestStr( int request ) {
   switch ( request ) {
-     case REGISTER_VESSEL:
+    case REGISTER_VESSEL:
       Serial.print(F("register"));
       break;
-     case VESSEL_CONFIG:
+    case VESSEL_CONFIG:
       Serial.print(F("config"));
       break;
     case DEBUG:
@@ -137,13 +140,14 @@ boolean WebClient::sendHttp( int request, String message ) {
 
 boolean WebClient::sendHttp( int request, boolean post, String attrs ) {
   if ( client.connected()) {
-    if( request != NMEA )
+    if ( request != NMEA )
       Serial.print(F("REQUEST ")); logRequestStr( request ); Serial.print(F(" ")); Serial.println(attrs );
     //logRequest( request, post, attrs );
 
     // Make a HTTP request:
     client.print( post ? F("POST ") : F("GET ") );
     client.print( context );
+    Serial.print(F("contecxt: ")); Serial.print( context );
     requestService( request );
     client.print(F("?id=" ));
     client.print( id );
@@ -227,7 +231,7 @@ void WebClient::logRequest( int request, boolean post, String attrs ) {
    Creates a String request from the client
 */
 String WebClient::printResponse( int request ) {
-  //Serial.print( F("RESPONSE TO "));
+  Serial.print( F("RESPONSE TO "));
   logRequestStr( request );
   // Serial.print(" PROCESSING: ");
   //Serial.print( client.available() );
@@ -238,7 +242,7 @@ String WebClient::printResponse( int request ) {
     char c = client.read();
     retval += c;
   }
-  //Serial.print( F( ": ")); Serial.println( retval );
+  Serial.print( F( ": ")); Serial.println( retval );
 }
 
 void WebClient::loop() {

@@ -76,8 +76,10 @@ void TinyGPS::loop() {
       break;
     }
     //sendNMEA();
+
   }
-  //if (( latitude >= 0 ) && ( longitude >= 0 ))
+
+ //if (( latitude >= 0 ) && ( longitude >= 0 ))
   //vessel.update( latitude, longitude, bearing, speed, updated );
   //if ( gps.failedChecksum() ) {
   //  Serial.print(F("Sentences that failed checksum="));
