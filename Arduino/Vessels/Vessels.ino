@@ -6,8 +6,6 @@
 
 #define VESSEL F("AquaBoat")
 #define PASSPHRASE F("AquaPassphrase")
-#define LATITUDE 51.2
-#define LONGITUDE 4.2
 #define TIME_OUT 300 //msec
 
 SoftwareSerial Serial1(2, 3); // RX, TX

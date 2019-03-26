@@ -227,7 +227,7 @@ void WebClient::logRequest( int request, boolean post, String attrs ) {
    Creates a String request from the client
 */
 String WebClient::printResponse( int request ) {
-  Serial.print( F("RESPONSE TO "));
+  //Serial.print( F("RESPONSE TO "));
   logRequestStr( request );
   // Serial.print(" PROCESSING: ");
   //Serial.print( client.available() );
@@ -238,7 +238,7 @@ String WebClient::printResponse( int request ) {
     char c = client.read();
     retval += c;
   }
-  Serial.print( F( ": ")); Serial.println( retval );
+  //Serial.print( F( ": ")); Serial.println( retval );
 }
 
 void WebClient::loop() {
