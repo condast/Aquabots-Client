@@ -20,7 +20,6 @@ TinyGPS tinyGPS;
 Vessel vessel;
 ServoController servo;
 
-
 long vesselId;
 
 void setup() {
@@ -37,7 +36,10 @@ void loop() {
   tinyGPS.loop();
   if ( vesselId < 0 ) {
     vesselId =  registration.registerVessel( VESSEL, PASSPHRASE, tinyGPS.getLatitude(), tinyGPS.getLongitude() );
-    Serial.print(F("REGISTRATION FAILED: ")); Serial.println( vesselId );
+    if ( vesselId > 0 ){
+      webClient.setAuthentication( vesselId, PASSPHRASE ); 
+    }else
+      Serial.print(F("REGISTRATION FAILED: ")); Serial.println( vesselId );
   } else {
     Serial.print(F("VESSEL: ")); Serial.println( vesselId );
     vessel.loop( tinyGPS.getBearing());

@@ -93,7 +93,7 @@ int Vessel::setThrust( double thrst ) {
 bool Vessel::update( double latitde, double longitde, double bearing, double speed, bool updated ) {
   if ( ! webClient.connect() )
     return false;
-
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT ); 
   data.latitude = latitde;
   data.longitude = longitde;
   String url = F("&lo=");

@@ -61,7 +61,7 @@ void TinyGPS::loop() {
   while (Serial1.available() && ( millis() < ( current + TIME_OUT  ))) {
     char chr = Serial1.read();
     //readNMEA( chr );
-    //Serial.print(chr );
+    Serial.print(chr );
     gps.encode( chr );
     updated = gps.location.isUpdated();
     if ( updated ) {
@@ -75,12 +75,13 @@ void TinyGPS::loop() {
       Serial.print( longitude, 6 ), Serial.println("N\n\n "); // bearing, speed );
       break;
     }
+    //Serial.println();
     //sendNMEA();
 
   }
 
- //if (( latitude >= 0 ) && ( longitude >= 0 ))
-  //vessel.update( latitude, longitude, bearing, speed, updated );
+ if (( latitude >= 0 ) && ( longitude >= 0 ))
+  vessel.update( latitude, longitude, bearing, speed, updated );
   //if ( gps.failedChecksum() ) {
   //  Serial.print(F("Sentences that failed checksum="));
   //  Serial.println(gps.failedChecksum());

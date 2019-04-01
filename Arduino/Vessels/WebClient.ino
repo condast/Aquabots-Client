@@ -3,7 +3,7 @@ WebClient::WebClient() {}
 void WebClient::setup() {
   host = CONDAST_URL;
   port = PORT;
-  context = AQUABOTS_CONTEXT;
+  context = AQUABOTS_REGISTRATION_CONTEXT;
 
   // start the Ethernet connection:
   Serial.print(F("SETUP WEB CLIENT: ")); Serial.println( ip );
@@ -26,9 +26,9 @@ bool WebClient::connect() {
   int result = client.connect(server, port);
   //Serial.print(F("Connected: ")); Serial.println( result );
   if ( result) {
-    //Serial.print(F("success! "));
-    //Serial.println(Ethernet.localIP());
-    //Serial.println(Ethernet.gatewayIP());
+    Serial.print(F("success! "));
+    Serial.println(Ethernet.localIP());
+    Serial.println(Ethernet.gatewayIP());
     connected = result;
     return result;
   } else {
@@ -42,6 +42,15 @@ void WebClient::disconnect() {
   //if ( connected )
   //  Serial.println(F("Disconnecting: Complete "));
   connected = false;
+}
+
+void WebClient::setAuthentication( long i, String t ){
+    id = i;
+    token = t;
+}
+
+void WebClient::setContext( String c ){
+  context = c;  
 }
 
 void WebClient::requestService( int request ) {
@@ -141,13 +150,16 @@ boolean WebClient::sendHttp( int request, String message ) {
 boolean WebClient::sendHttp( int request, boolean post, String attrs ) {
   if ( client.connected()) {
     if ( request != NMEA )
-      Serial.print(F("REQUEST ")); logRequestStr( request ); Serial.print(F(" ")); Serial.println(attrs );
+      Serial.print(F("REQUEST ")); logRequestStr( request ); 
+      Serial.print(F(" ?id")); Serial.print( id );
+      Serial.print(F("&token")); Serial.print( token );
+      Serial.print(F(" ")); Serial.println(attrs );
     //logRequest( request, post, attrs );
 
     // Make a HTTP request:
     client.print( post ? F("POST ") : F("GET ") );
     client.print( context );
-    Serial.print(F("contecxt: ")); Serial.print( context );
+    Serial.print(F("context: ")); Serial.print( context );
     requestService( request );
     client.print(F("?id=" ));
     client.print( id );
