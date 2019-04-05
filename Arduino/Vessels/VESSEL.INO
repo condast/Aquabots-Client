@@ -69,12 +69,13 @@ bool Vessel::runMaintenance( unsigned int counter ) {
   return true;
 }
 
-void Vessel::setCourse( double newbearing, double thrst ) {
+void Vessel::setCourse( double heading, double thrst ) {
   // Serial.print(F("Bearing: ")); Serial.print( bearing ); Serial.print(F(", Thrust: ")); Serial.println( thrst );
-  bearing = newbearing;
+  bearing = heading;
   servo.setBearing( bearing);
   setThrust( thrst );
-  Serial.print(F("\n\nCourse updated")); Serial.println( bearing);
+  Serial.print(F("\nCourse updated (")); Serial.print( bearing);Serial.print(F(", ")); 
+  Serial.print( thrst ); Serial.println(F(")\n"));
 }
 
 int Vessel::setThrust( double thrst ) {
@@ -116,7 +117,7 @@ bool Vessel::update( double latitde, double longitde, double bearing, double spe
   }
 
   //String response = webClient.printResponse( WebClient::UPDATE );
-  //Serial.print(F("\n\nBEARING: \n")); Serial.println( response);
+  //Serial.print(F("\n\nHEADING: \n")); Serial.println( response);
 
   size_t capacity = JSON_OBJECT_SIZE(11) + 79;
   DynamicJsonDocument doc(capacity);
@@ -127,11 +128,11 @@ bool Vessel::update( double latitde, double longitde, double bearing, double spe
     return false;
   }
   JsonObject root = doc.as<JsonObject>();
-  data.bearing = root["b"];
+  data.heading = root["h"];
   data.thrust = root["t"];
   data.time = root["tm"];
   webClient.disconnect();
-  setCourse( data.bearing, data.thrust);
+  setCourse( data.heading, data.thrust);
   return true;
 }
 
@@ -198,6 +199,7 @@ bool Vessel::updateWaypoints( ) {
     result = webClient.sendHttp( WebClient::WAYPOINTS, false, "");
     if (!result ) {
       webClient.disconnect();
+      setCourse(0,0);
       return result;
     }
 
@@ -206,17 +208,18 @@ bool Vessel::updateWaypoints( ) {
     DeserializationError error = deserializeJson(doc, webClient.client);
     if (error) {
       Serial.println(F("Parsing update failed!"));
+      setCourse(0,0);
       webClient.disconnect();
       return false;
     }
     JsonObject root = doc.as<JsonObject>();
-    data.bearing = root["b"];
+    data.heading = root["h"];
     data.thrust = root["t"];
     data.time = root["tm"];
     webClient.disconnect();
     result = true;
   }
-  setCourse( data.bearing, data.thrust);
+  setCourse( data.heading, data.thrust);
   return result;
 }
 

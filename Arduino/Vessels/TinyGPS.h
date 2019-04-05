@@ -5,30 +5,21 @@
 #define TINY_GPS_ID "gps.tiny"
 
 #include <SoftwareSerial.h>
+#include "AbstractGPS.h"
 #include <TinyGPS++.h>
 
-class TinyGPS {
+class TinyGPS : public AbstractGPS{
 
   private:
-    bool complete; //general purpose flag for reading nmea sentences
-    String sentence;
-    double bearing;
-    double speed;
-    double latitude;
-    double longitude;
     TinyGPSPlus gps;
-    //void sendNMEA();
-    //bool readNMEA( char chr); //used by SerialEvent
 
-  public: TinyGPS(void);
+  public: TinyGPS(void) : AbstractGPS(){};
     void setup();
-    double getBearing();
-    double getLatitude();
-    double getLongitude();
-    double getBearing( double latFrom, double lonFrom, double latTo, double lonTo );
-    double getDistance( double latFrom, double lonFrom, double latTo, double lonTo );
+    using AbstractGPS::getBearing;
+    double getBearing( double latFrom, double lonFrom, double latTo, double lonTo ) override;
+    double getDistance( double latFrom, double lonFrom, double latTo, double lonTo ) override;
     bool wait();//wait for processing of the nmea sentence
-    void loop();
+    void loop() override;
 };
 
 #endif

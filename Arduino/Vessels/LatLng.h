@@ -25,16 +25,6 @@
 class LatLng {
 
   public: LatLng(void);
-    /**
-       Vessel Data object
-    */
-    struct VesselData {
-      int time;
-      double latitude;//current position
-      double longitude;
-      double bearing;
-      double thrust;
-    };
 
     double toRadians( int degree );
     int toDegrees( double radians );

@@ -21,18 +21,18 @@ void WebClient::setup() {
 }
 
 bool WebClient::connect() {
-  Serial.print(F("Connecting to: ")); Serial.print( server ); Serial.print(F(":")); Serial.print( port ); Serial.print(F(" ..."));
+  //Serial.print(F("Connecting to: ")); Serial.print( server ); Serial.print(F(":")); Serial.print( port ); Serial.print(F(" ..."));
   //client.setTimeout(5000);
   int result = client.connect(server, port);
   //Serial.print(F("Connected: ")); Serial.println( result );
   if ( result) {
-    Serial.print(F("success! "));
-    Serial.println(Ethernet.localIP());
-    Serial.println(Ethernet.gatewayIP());
+    //Serial.print(F("success! "));
+    //Serial.println(Ethernet.localIP());
+    //Serial.println(Ethernet.gatewayIP());
     connected = result;
     return result;
   } else {
-    Serial.println(F("failed. "));
+    //Serial.println(F("failed. "));
     client.stop();
   }
 }
@@ -149,11 +149,11 @@ boolean WebClient::sendHttp( int request, String message ) {
 
 boolean WebClient::sendHttp( int request, boolean post, String attrs ) {
   if ( client.connected()) {
-    if ( request != NMEA )
-      Serial.print(F("REQUEST ")); logRequestStr( request ); 
-      Serial.print(F(" ?id")); Serial.print( id );
-      Serial.print(F("&token")); Serial.print( token );
-      Serial.print(F(" ")); Serial.println(attrs );
+    //if ( request != NMEA )
+      //Serial.print(F("REQUEST ")); logRequestStr( request ); 
+     // Serial.print(F(" ?id")); Serial.print( id );
+      //Serial.print(F("&token")); Serial.print( token );
+      //Serial.print(F(" ")); Serial.println(attrs );
     //logRequest( request, post, attrs );
 
     // Make a HTTP request:

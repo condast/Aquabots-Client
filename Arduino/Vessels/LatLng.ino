@@ -1,10 +1,10 @@
-LatLng::LatLng(){};
+LatLng::LatLng() {};
 
-double LatLng::toRadians( int degree ){
+double LatLng::toRadians( int degree ) {
   return RADIAN_CONVERSION * degree;
 }
 
-int LatLng::toDegrees( double radians ){
+int LatLng::toDegrees( double radians ) {
   return (int)( radians / RADIAN_CONVERSION );
 }
 
@@ -30,27 +30,22 @@ double LatLng::lngDistance( double lat1, double lon1, double lat2, double lon2, 
   return sign * haversine( rlat1, rlat1, 0, lonDistance, el1, el2 );
 }
 
-  /*
-   * Calculate distance between two points in latitude and longitude taking
-   * into account height difference. If you are not interested in height
-   * difference pass 0.0. Uses Haversine method as its base.
-   * 
-   * lat1, lon1 Start point lat2, lon2 End point el1 Start altitude in meters
-   * el2 End altitude in meters
-   * @returns Distance in Meters
-   */
-  double LatLng::latDistance( double lat1, double lon1, double lat2, double lon2, double el1, double el2 ) {
+/*
+   Calculate distance between two points in latitude and longitude taking
+   into account height difference. If you are not interested in height
+   difference pass 0.0. Uses Haversine method as its base.
 
-    double rlat1 = toRadians( lat1 );
-    double rlat2 = toRadians( lat2 );
-    double latdistance = lat2 - lat1; 
-    double sign = (latdistance < 0.01d )?-1: 1;
-    double rlatDistance = toRadians(lat2 - lat1);
+   lat1, lon1 Start point lat2, lon2 End point el1 Start altitude in meters
+   el2 End altitude in meters
+   @returns Distance in Meters
+*/
+double LatLng::latDistance( double lat1, double lon1, double lat2, double lon2, double el1, double el2 ) {
 
-    return sign*haversine( rlat1, rlat2, rlatDistance, 0, el1, el2 );
-  }
+  double rlat1 = toRadians( lat1 );
+  double rlat2 = toRadians( lat2 );
+  double latdistance = lat2 - lat1;
+  double sign = (latdistance < 0.01d ) ? -1 : 1;
+  double rlatDistance = toRadians(lat2 - lat1);
 
-struct LatLng::VesselData LatLng::getVesseldata( double rlat1, double rlat2, double dLat, double dLon ) {
-  VesselData data;
-  return data;
+  return sign * haversine( rlat1, rlat2, rlatDistance, 0, el1, el2 );
 }

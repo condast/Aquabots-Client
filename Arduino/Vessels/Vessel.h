@@ -21,7 +21,17 @@
 #define DEFAULT_RANGE 12;//12 mtrs
 
 class Vessel {
-
+    /**
+       Vessel Data object
+    */
+    struct VesselData {
+      int time;
+      double latitude;//current position
+      double longitude;
+      double heading;
+      double thrust;
+    };
+    
     struct Waypoint {
       String name;
       double latitude;
@@ -52,8 +62,7 @@ class Vessel {
     double speed;
     int speed_offset; //offset for speed motor
     unsigned int range;//The range in between which a location has been reached
-
-    LatLng::VesselData data;
+    VesselData data;
     Waypoint waypoints[ MAX_WAYPOINTS ];
     unsigned int waypointIndex;
 

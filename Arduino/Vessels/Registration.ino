@@ -10,6 +10,7 @@ long Registration::registerVessel( String vesselName, String passphrase, double 
   if ( !webClient.connect() )
     return -2;
 
+  webClient.setContext( AQUABOTS_REGISTRATION_CONTEXT ); 
   Serial.print(F("Registering Vessel: ")); Serial.println( vesselName );
   String url = F("&name=");
   url += String( vesselName );

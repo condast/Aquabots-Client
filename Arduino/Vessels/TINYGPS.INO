@@ -1,49 +1,29 @@
-TinyGPS::TinyGPS() {};
+#include "TinyGPS.h"
 
 //Repeatedly feed it characters from your
 void TinyGPS::setup( ) {
   Serial1.begin(9600);
   Serial.println(F("GPS INITIALISED"));
-  latitude = -1;
-  longitude = -1;
-  bearing = 0;
-  speed = 0;
-  complete = false;
 }
 
-double TinyGPS::getBearing() {
-  return bearing;
-}
-
-double TinyGPS::getLatitude() {
-  return latitude;
-}
-
-double TinyGPS::getLongitude() {
-  return longitude;
-}
 /*
-void TinyGPS:: sendNMEA() {
+  void TinyGPS:: sendNMEA() {
   if ( !complete )
     return;
   data.sendNMEA( TINY_GPS_ID, TINY_GPS, sentence );
   complete = false;
   sentence = "";
-}
+  }
 */
 
-bool TinyGPS::wait() {
-  return complete;
-}
-
 /*
-bool TinyGPS::readNMEA( char chr ) {
+  bool TinyGPS::readNMEA( char chr ) {
   if ( complete )
     return false;
   sentence += chr;
   if (chr == 0x0A)
     complete = true;
-}
+  }
 */
 double TinyGPS::getBearing( double latFrom,  double lonFrom, double latTo, double lonTo ) {
   return gps.courseTo( latFrom, lonFrom, latTo, lonTo );
@@ -58,7 +38,7 @@ void TinyGPS::loop() {
   bool updated = false;
   unsigned long current = millis();
 
-  while (Serial1.available() && ( millis() < ( current + TIME_OUT  ))) {
+ while (Serial1.available() && ( millis() < ( current + TIME_OUT  ))) {
     char chr = Serial1.read();
     //readNMEA( chr );
     Serial.print(chr );
@@ -80,8 +60,8 @@ void TinyGPS::loop() {
 
   }
 
- if (( latitude >= 0 ) && ( longitude >= 0 ))
-  vessel.update( latitude, longitude, bearing, speed, updated );
+  if (( latitude >= 0 ) && ( longitude >= 0 ))
+    vessel.update( latitude, longitude, bearing, speed, updated );
   //if ( gps.failedChecksum() ) {
   //  Serial.print(F("Sentences that failed checksum="));
   //  Serial.println(gps.failedChecksum());
