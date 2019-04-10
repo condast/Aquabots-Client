@@ -3,14 +3,20 @@ ServoController::ServoController() {};
 void ServoController::setup( ) {
   //compass.setup();
   //compass.setFilter( 10 );
-  offset =  -5;
+  heading_offset = -5;
   clipRange = SERVO_RANGE;
-  offset = 0;//sdcard.read( CONFIG, CLIP_RANGE ).toInt();
-  bearingServo.attach( PWM_OUT_BEARING );
-  bearingServo.write( 90 );
-  bearing = 0;
-  heading = 0;
+  heading_offset = 0;//sdcard.read( CONFIG, CLIP_RANGE ).toInt();
+  headingServo.attach( PWM_OUT_HEADING );
+  headingServo.write( 90 );//Standard servo range is 0 - 180, with 90 being stop
+  angle = 0;
   enable = true;
+  thrust_offset = 0;
+
+  //referenceServo.attach( PWM_OUT_REFERENCE );
+  thrustServo.attach( PWM_OUT_SPEED );
+  //only need to be set once
+  //referenceServo.write( 90 );
+  thrustServo.write( 90 );
 }
 
 boolean ServoController::initialise() {
@@ -27,8 +33,8 @@ bool ServoController::maintenance() {
       counter++;
       counter %= 100;
       int speed = -100 + 2 * counter;
-      setBearing( br );
-      loop( br);
+      angle = br;
+      loop( br, 0);
       delay(100);
     } while ( counter != 0 );
     br -= 10;
@@ -36,6 +42,13 @@ bool ServoController::maintenance() {
   } while (true);
 }
 
+double ServoController::getHeading( ) {
+  return angle;
+}
+
+double ServoController::getThrust( ) {
+  return thrust;
+}
 /**
    Used by interrupt handler
 */
@@ -48,34 +61,44 @@ bool ServoController::isReady() {
 }
 
 /**
-   get the angle for the servo, based on the desired bearing
+   Converts an angle (0-360) to a form that fits the servo
+   (0 - 180 ) => 90 - 180
+   (181-360)  => 0 - 90
 */
-void ServoController::setBearing( double brng ) {
-  bearing = brng;
-  Serial.print(F("Bearing: ")); Serial.print( bearing );  Serial.print(F(" Heading: ")); Serial.println( heading );
+double ServoController::getCorrectedAngle( double a ) {
+  return ( a <= 180 ) ? map( a, 0, 180, 90, 180) : map( a, 180, 360, 0, 90);
 }
 
 /**
-   get the angle for the servo, based on the desired bearing
+   get the angle for the servo, based on the desired heading
 */
 void ServoController::stop( ) {
-    bearingServo.write( 90 );
-    bearing = 0;
-    heading = 0;
+  headingServo.write( 90 ); //only needs to be set once
+  thrustServo.write( 90 );
+  angle = 0;
+  thrust = 0;
 }
 
-void ServoController::loop( double brng) {
-  setBearing( brng );
+void ServoController::loop( double a, double t) {
+  angle = getCorrectedAngle( a);
+  thrust = map( t, -100, 100, 0, 180 );
+  Serial.print(F("\n\nCourse: (")); Serial.print( angle); Serial.print(F(", ")); Serial.println( thrust);
+
   //compass.loop();
   //if ( compass.isEnabled() ) {
   //  heading = compass.getFiltered();
   //} else if ( tendof.isEnabled() ) {
   //  heading = tendof.getHeading();
   //} else {
-    heading = bearing;
+  //heading = heading;
   //}
-  double diff = bearing - heading;
-  Serial.print(F("\n\nCorrecting: ")); Serial.println( diff + offset);
-  int newBearing = map(( offset + diff ), 0, 360, clipRange, 180 - clipRange );
-  bearingServo.write( newBearing );
+  //double diff = heading - heading;
+  //erial.print(F("\n\nCorrecting: ")); Serial.println( diff + heading_offset);
+  //int newheading = map(( heading_offset + diff ), 0, 360, clipRange, 180 - clipRange );
+  headingServo.write( angle + heading_offset );
+  thrustServo.write( thrust + thrust_offset );
+}
+
+void ServoController::loop( double h) {
+  loop( h, thrust );
 }

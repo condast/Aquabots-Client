@@ -18,7 +18,6 @@ static WebClient webClient;
 static Registration registration;
 static TinyGPS gps;
 static Vessel vessel;
-static ServoController servo;
 
 long vesselId;
 
@@ -43,7 +42,7 @@ void loop() {
       Serial.print(F("REGISTRATION FAILED: ")); Serial.println( vesselId );
   } else {
     Serial.print(F("VESSEL: ")); Serial.println( vesselId );
-    vessel.loop( gps.getBearing());
+    //vessel.loop( gps.getBearing());
   }
 
   delay(1000);

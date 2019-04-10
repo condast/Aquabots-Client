@@ -7,17 +7,9 @@ void Vessel::setup() {
   Serial.print(F("VESSEL ENABLED: ")); Serial.println( enable );
   if (!enable )
     return;
-  thrust = 0;
   speed = 0;
   range = DEFAULT_RANGE;
   waypointIndex = 0;
-
-  speed_offset = -4;
-
-  referenceServo.attach( PWM_OUT_REFERENCE );
-  speedServo.attach( PWM_OUT_SPEED );
-  referenceServo.write( 90 );//only need to be set once
-  speedServo.write( 90 );
 
   Serial.print(F("MAINTENANCE MODE: ")); Serial.println( maintenance );
 
@@ -26,7 +18,7 @@ void Vessel::setup() {
   while (!init) {
     init = initialise();
   }
-  servo.setup();
+  controller.setup();
   Serial.print(F("VESSEL READY ")); Serial.println( init );
   delay( 1000);
 }
@@ -34,15 +26,15 @@ void Vessel::setup() {
 boolean Vessel::initialise() {
   if (!enable || initialised )
     return true;
-  bool ready = servo.initialise();
+  bool ready = controller.initialise();
   return ready;
 }
 
 bool Vessel::runMaintenance( unsigned int counter ) {
   if (!enable || !maintenance )
     return true;
-  bool ready = servo.isReady();
-  servo.loop( bearing);
+  bool ready = controller.isReady();
+  controller.loop( bearing, data.thrust);
   int thrust = 0;
   Serial.print(F("MAINTENANCE: ")); Serial.println( ready );
   if ( counter > 0) {
@@ -72,20 +64,11 @@ bool Vessel::runMaintenance( unsigned int counter ) {
 void Vessel::setCourse( double heading, double thrst ) {
   // Serial.print(F("Bearing: ")); Serial.print( bearing ); Serial.print(F(", Thrust: ")); Serial.println( thrst );
   bearing = heading;
-  servo.setBearing( bearing);
-  setThrust( thrst );
-  Serial.print(F("\nCourse updated (")); Serial.print( bearing);Serial.print(F(", ")); 
+  controller.loop( heading, thrst );
+  Serial.print(F("\nCourse updated (")); Serial.print( bearing); Serial.print(F(", "));
   Serial.print( thrst ); Serial.println(F(")\n"));
 }
 
-int Vessel::setThrust( double thrst ) {
-  thrust = thrst;
-  int newThrust = map( thrust, 0, 100, MIN_SERVO, MAX_SERVO );
-  //Serial.print("Offset: " ); Serial.print( speed_offset );
-  //Serial.print(" Thrust: " ); Serial.print( thrust ); Serial.print( " " ); Serial.println( newThrust );
-  speedServo.write( speed_offset + newThrust );
-  return newThrust;
-}
 
 /**
    Send the current location and get a stack with the next steps to take.
@@ -94,7 +77,7 @@ int Vessel::setThrust( double thrst ) {
 bool Vessel::update( double latitde, double longitde, double bearing, double speed, bool updated ) {
   if ( ! webClient.connect() )
     return false;
-  webClient.setContext( AQUABOTS_VESSEL_CONTEXT ); 
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
   data.latitude = latitde;
   data.longitude = longitde;
   String url = F("&lo=");
@@ -131,6 +114,7 @@ bool Vessel::update( double latitde, double longitde, double bearing, double spe
   data.heading = root["h"];
   data.thrust = root["t"];
   data.time = root["tm"];
+  data.manual = root["mn"];
   webClient.disconnect();
   setCourse( data.heading, data.thrust);
   return true;
@@ -199,7 +183,7 @@ bool Vessel::updateWaypoints( ) {
     result = webClient.sendHttp( WebClient::WAYPOINTS, false, "");
     if (!result ) {
       webClient.disconnect();
-      setCourse(0,0);
+      setCourse(0, 0);
       return result;
     }
 
@@ -208,7 +192,7 @@ bool Vessel::updateWaypoints( ) {
     DeserializationError error = deserializeJson(doc, webClient.client);
     if (error) {
       Serial.println(F("Parsing update failed!"));
-      setCourse(0,0);
+      setCourse(0, 0);
       webClient.disconnect();
       return false;
     }
@@ -225,10 +209,7 @@ bool Vessel::updateWaypoints( ) {
 
 void Vessel::stop() {
   Serial.println("\n\nSTOPPING!!!");
-  servo.stop();
-  referenceServo.write( 90 );//only need to be set once
-  speedServo.write( 90 );
-  thrust = 0;
+  controller.stop();
   bearing = 0;
   speed = 0;
 }
@@ -236,7 +217,10 @@ void Vessel::stop() {
 void Vessel::loop( double heading) {
   if ( !enable )
     return;
-  servo.loop( heading );
+  double diff = ( 360 + data.heading - bearing) % 360;
+  double hd = ( data.manual ) ? angle : heading;
+  Serial.print(F("VESSEL: (")); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
+  controller.loop( hd, data.thrust );
 }
 
 /*

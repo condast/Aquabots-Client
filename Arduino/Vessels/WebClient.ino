@@ -159,7 +159,7 @@ boolean WebClient::sendHttp( int request, boolean post, String attrs ) {
     // Make a HTTP request:
     client.print( post ? F("POST ") : F("GET ") );
     client.print( context );
-    Serial.print(F("context: ")); Serial.print( context );
+    //Serial.print(F("context: ")); Serial.print( context );
     requestService( request );
     client.print(F("?id=" ));
     client.print( id );
