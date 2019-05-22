@@ -10,43 +10,11 @@
 
 const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
 
-/*
-  Web client
-
-  This sketch connects to a website
-  using an Arduino Wiznet Ethernet shield.
-
-  Circuit:
-   Ethernet shield attached to pins 10, 11, 12, 13
-
-  created 18 Dec 2009
-  by David A. Mellis
-  modified 9 Apr 2012
-  by Tom Igoe, based on work by Adrian McEwen
-
-*/
-
 //Condast SERVER
 // Set the static IP address to use if the DHCP fails to assign
-//const char server[] = "www.condast.com";
-//IPAddress ip(79, 170, 90, 5);
-//const int PORT = 8080;
-
-//LOCALHOST
-// Set the static IP address to use if the DHCP fails to assign
-IPAddress server(192, 168, 178, 41);
-IPAddress ip(192, 168, 178, 41);
-const int PORT = 10080;
-
-//Huawei
-//IPAddress server(192,168,8,100);
-//IPAddress ip(192,168,8,100);
-//const int PORT = 10081;
-
-//Havenlab
-//IPAddress server(192,168,10,110);
-//IPAddress ip(192,168,10,110);
-//const int PORT = 10080;
+const char server[] = "www.condast.com";
+IPAddress ip(79, 170, 90, 5);
+const int PORT = 8080;
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield

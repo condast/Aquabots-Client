@@ -10,21 +10,6 @@
 
 const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
 
-/*
-  Web client
-
-  This sketch connects to a website
-  using an Arduino Wiznet Ethernet shield.
-
-  Circuit:
-   Ethernet shield attached to pins 10, 11, 12, 13
-
-  created 18 Dec 2009
-  by David A. Mellis
-  modified 9 Apr 2012
-  by Tom Igoe, based on work by Adrian McEwen
-
-*/
 
 //Condast SERVER
 // Set the static IP address to use if the DHCP fails to assign

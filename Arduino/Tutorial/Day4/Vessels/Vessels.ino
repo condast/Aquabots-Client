@@ -3,6 +3,10 @@
 #include "WebClient.h"
 #include "Registration.h"
 #include "TinyGPS.h"
+<<<<<<< HEAD
+=======
+#include "LatLng.h"
+>>>>>>> branch 'keesp' of https://github.com/condast/Aquabots-Client.git
 #include "Vessel.h"
 #include "ServoController.h"
 
