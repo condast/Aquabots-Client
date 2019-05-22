@@ -23,6 +23,8 @@ long Registration::registerVessel( String vesselName, String passphrase, double 
 
   boolean result = webClient.sendHttp( WebClient::REGISTER_VESSEL, false, url);
   if (!result ) {
+    Serial.print( "NOT REGISTERED: " );
+    Serial.println( url );
     webClient.disconnect();
     return -3;
   }
