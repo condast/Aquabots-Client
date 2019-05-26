@@ -2,7 +2,7 @@
 #define Vessel_h
 
 #include "ServoController.h"
-#include "DoublePropellor.h"
+#include "AnnaController.h"
 
 #define AUTONOMY F("AUTONOMY")
 #define WAYPOINTS_FILE F("waypoints.cfg")
@@ -42,7 +42,8 @@ class Vessel {
     bool update( double latitude, double longitude, double bearing, double speed, bool updated );
     bool getWaypoint();
     void loop( double bearing);
-    void interrupt( unsigned int loopCounter );
+    void interrupt();
+    //void interrupt( unsigned int loopCounter );
     void stop();
 
   private:
@@ -55,9 +56,7 @@ class Vessel {
     VesselData data;
     Waypoint waypoints[ MAX_WAYPOINTS ];
     unsigned int waypointIndex;
-    DoublePropellor controller;
-    //Servo referenceServo; //The Anna uses two motors, of which this one controls the reference
-    //Servo speedServo;  // create servo object to control the speed
+    AnnaController controller;
     bool runMaintenance( unsigned int counter );
     bool updateWaypoints();
 };

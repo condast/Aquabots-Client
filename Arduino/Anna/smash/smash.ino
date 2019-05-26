@@ -6,19 +6,23 @@
 #include "LatLng.h"
 #include "Vessel.h"
 #include "ServoController.h"
+#include "Interrupts.h"
+#include "Logger.h"
+#include "Options.h"
 
-#define VESSEL F("AquaBoat")
-#define PASSPHRASE F("AquaPassphrase")
+#define VESSEL F("Anna")
+#define PASSPHRASE F("AquabotsRule")
 #define LATITUDE 51.2
 #define LONGITUDE 4.2
 #define TIME_OUT 3000 //msec
 
-//SoftwareSerial Serial1(2, 3); // RX, TX
 static WebClient webClient;
 static Registration registration;
 static TinyGPS gps;
 static Vessel vessel;
-
+static Interrupts interrupt;
+static Logger logger;
+static Options options;
 long vesselId;
 
 void setup() {
