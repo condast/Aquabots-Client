@@ -6,6 +6,7 @@
 
 #define AQUABOTS_REGISTRATION_CONTEXT F("/arnac/registration/")
 #define AQUABOTS_VESSEL_CONTEXT F("/arnac/rest/")
+#define AQUABOTS_OPTIONS_CONTEXT F("/arnac/rest/options/")
 #define CONDAST_URL F("www.condast.com")
 
 const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server

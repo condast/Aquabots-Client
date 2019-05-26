@@ -6,6 +6,7 @@
 #include "Vessel.h"
 #include "ServoController.h"
 #include "Interrupts.h"
+#include "Options.h"
 #include "Logger.h"
 
 #define VESSEL F("AquaBoat")
@@ -13,7 +14,7 @@
 #define LATITUDE 51.2
 #define LONGITUDE 4.2
 #define TIME_OUT 3000 //msec
-#define REFRESH 3
+#define REFRESH 10
 
 //SoftwareSerial Serial1(2, 3); // RX, TX
 static WebClient webClient;
@@ -21,6 +22,7 @@ static Registration registration;
 static TinyGPS gps;
 static Vessel vessel;
 static Interrupts interrupt;
+static Options options;
 static Logger logger;
 
 long vesselId;
@@ -31,6 +33,9 @@ void setup() {
   Serial.print(F("Setup Vessel: ")); Serial.println( VESSEL );
   vesselId = -1;
   webClient.setup();
+  interrupt.setup();
+  options.setup();
+  logger.setup();
   registration.setup();
   gps.setup();
   vessel.setup();
@@ -54,13 +59,21 @@ void loop() {
     interrupt.clearSecondsFlank();
     load = ( load + 1 ) % 120;
     int balance = load % REFRESH;
-    //Serial.println( balance );
+    Serial.println( balance );
     switch ( balance ) {
       case 0:
         break;
       case 1:
         logger.setup();
         Serial.println( "LOGGER SETUP COMPLETE" );
+        break;
+      case 2:
+        Serial.println( "Aquabots message" );
+        logger.println("HELLO AQUABOTS");
+        break;
+      case 9:
+        options.getOptions();
+        Serial.println( "OPTIONS RECEIVED" );
         break;
       default:
          break;

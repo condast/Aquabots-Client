@@ -5,7 +5,7 @@ Logger::Logger() {};
    Set up the logger
 */
 boolean Logger::setup( ) {
-  logger = false;//webClient.requestLog();
+  logger = options.isLogging();
   Serial.print(F( "SETUP Logger: " )); Serial.println( logger );
   return logger;
 }
@@ -16,17 +16,17 @@ void Logger::setLogger( boolean choice ) {
 }
 
 void Logger::print( String msg ) {
-  if ( !logger )
+  if ( !options.isLogging())
     return;
-  //Serial.print( "log request: "); Serial.println( msg );
-  //options.getOptions( WebClient::LOG, msg);
+  Serial.print( "log request: "); Serial.println( msg );
+  options.getOptions( WebClient::LOG, msg);
 }
 
 void Logger::println( String msg ) {
-  if ( !logger )
+  if ( !options.isLogging())
     return;
-  //Serial.print( "log request: "); Serial.println( msg );
-  //options.getOptions( WebClient::LOG, msg);
+  Serial.print( "log request: "); Serial.println( msg );
+  options.getOptions( WebClient::LOG, msg);
 }
 
 /**

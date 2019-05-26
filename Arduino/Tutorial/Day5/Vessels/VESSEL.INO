@@ -69,7 +69,6 @@ void Vessel::setCourse( double heading, double thrst ) {
   Serial.print( thrst ); Serial.println(F(")\n"));
 }
 
-
 /**
    Send the current location and get a stack with the next steps to take.
    The first latlnh should be entered last, so that the can be popped
