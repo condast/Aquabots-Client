@@ -12,13 +12,14 @@ const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
 
 //Condast SERVER
 // Set the static IP address to use if the DHCP fails to assign
-//const char server[] = "www.condast.com";
-//IPAddress ip(79, 170, 90, 5);
-//const int PORT = 8080;
+const char server[] = "www.condast.com";
+IPAddress ip(79, 170, 90, 5);
+const int PORT = 8080;
 
-IPAddress server(192, 168, 10, 101);
-IPAddress ip(192, 168, 10, 101);
-const int PORT = 10080;
+//LOCALHOST HAVENLAB
+//IPAddress server(192, 168, 10, 101);
+//IPAddress ip(192, 168, 10, 101);
+//const int PORT = 10080;
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield

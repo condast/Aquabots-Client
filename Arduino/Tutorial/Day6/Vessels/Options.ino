@@ -49,20 +49,24 @@ bool Options::hasBathymetry() {
 }
 
 void Options::getOptions() {
-  getOptions( WebClient::OPTIONS, "");
+  getOptions( WebClient::OPTIONS, "", false);
   //Serial.print(F("Get options ")); Serial.println( String( options ));
 }
 
 /**
    Get the options
 */
-bool Options::getOptions( int request, String msg) {
+bool Options::getOptions( int request, String msg, bool compound) {
   if ( !webClient.connect()) {
     return false;
   }
   //Serial.print( "options request: "); Serial.println( msg );
   String message = F("&msg=");
-  message += webClient.urlencode( msg );
+  if ( !compound )
+    message += webClient.urlencode(msg);
+  else
+    message = msg;
+
   webClient.setContext( AQUABOTS_OPTIONS_CONTEXT );
   boolean result = webClient.sendHttp( request, false, message );
   if ( !result ) {

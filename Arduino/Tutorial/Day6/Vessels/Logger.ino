@@ -19,14 +19,14 @@ void Logger::print( String msg ) {
   if ( !options.isLogging())
     return;
   //Serial.print( "log request: "); Serial.println( msg );
-  options.getOptions( WebClient::LOG, msg);
+  options.getOptions( WebClient::LOG, msg, false);
 }
 
 void Logger::println( String msg ) {
   if ( !options.isLogging())
     return;
   //Serial.print( "log request: "); Serial.println( msg );
-  options.getOptions( WebClient::LOG, msg);
+  options.getOptions( WebClient::LOG, msg, false);
 }
 
 /**
