@@ -7,7 +7,7 @@ void Data:: send( int request, String senderId, String senderName, String device
   data += senderId;
   data += F("&sender-name=");
   data += webClient.urlencode(senderName);
-  F("&device-id=");
+  data += F("&device-id=");
   data += deviceId;
   data += F("&device-name=");
   data += webClient.urlencode(deviceName);
@@ -18,10 +18,16 @@ void Data:: send( int request, String senderId, String senderName, String device
   //Serial.print(F("READING ")); Serial.print(type); Serial.print(F(": ")); 
   //Serial.print(deviceName); Serial.print(F(" - "));Serial.print( sentence );
   //data += webClient.urlencode( data );
+  //Serial.println( data );
   options.getOptions( request, data, true );
 }
 
+void Data:: send( int request, String deviceName, String deviceId, String type, String sentence ) {
+  //Serial.print(F("\tSEND DATA:")); Serial.print(sentence); Serial.println(F("\n\n")); 
+  send( request, VESSEL_ID, VESSEL, deviceName, deviceId, type, sentence );
+}
+
 void Data:: sendNMEA( String deviceName, String deviceId, String sentence ) {
-  Serial.print(F("\tSEND DATA:")); Serial.print(sentence); Serial.println(F("\n\n")); 
-  send( WebClient::NMEA,VESSEL_ID, VESSEL, deviceName, deviceId, F("nmea"), sentence );
+  //Serial.print(F("\tSEND DATA:")); Serial.print(sentence); Serial.println(F("\n\n")); 
+  send( WebClient::NMEA, VESSEL_ID, VESSEL, deviceName, deviceId, F("nmea"), sentence );
 }

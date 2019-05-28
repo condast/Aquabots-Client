@@ -60,17 +60,17 @@ bool Options::getOptions( int request, String msg, bool compound) {
   if ( !webClient.connect()) {
     return false;
   }
-  //Serial.print( "options request: "); Serial.println( msg );
   String message = F("&msg=");
   if ( !compound )
     message += webClient.urlencode(msg);
   else
     message = msg;
+  //Serial.print( "options request ("); Serial.print( request); Serial.print(F("): |" )); Serial.print( msg ); Serial.println("|");
 
   webClient.setContext( AQUABOTS_OPTIONS_CONTEXT );
   boolean result = webClient.sendHttp( request, false, message );
   if ( !result ) {
-    //Serial.print(F("Request options failed: ")); Serial.println( msg );
+    Serial.print(F("Request options failed: ")); Serial.println( msg );
     webClient.disconnect();
     return false;
   }
@@ -85,7 +85,7 @@ bool Options::getOptions( int request, String msg, bool compound) {
   }
   JsonObject root = doc.as<JsonObject>();
   options = root["o"];
-  //Serial.print(F("OPTIONS DATA " )); Serial.println( options);
+  //Serial.print(F("OPTIONS DATA " )); Serial.print( request); Serial.print(F(": " )); Serial.println( options);
   //serializeJson(doc, Serial);
   webClient.disconnect();
   return true;

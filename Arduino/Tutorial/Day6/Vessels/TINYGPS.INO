@@ -1,5 +1,7 @@
 #include "TinyGPS.h"
 
+#define GPS_LOCATED F("\n\nGPS Location Updated: ")
+
 //Repeatedly feed it characters from your
 void TinyGPS::setup( ) {
   Serial1.begin(9600);
@@ -23,7 +25,7 @@ double TinyGPS::getDistance( double latFrom, double lonFrom, double latTo, doubl
 }
 
 void TinyGPS::loop( bool nmea) {
-  Serial.println(F("CHECKING GPS"));
+  //Serial.println(F("CHECKING GPS"));
   bool updated = false;
   unsigned long current = millis();
   String str = String();
@@ -40,7 +42,8 @@ void TinyGPS::loop( bool nmea) {
       longitude = gps.location.lng();
       bearing = gps.course.deg();
       speed = gps.speed.mps();
-      Serial.print(F("\n\nGPS Location Updated: "));
+      logger.println( GPS_LOCATED);
+      Serial.print(GPS_LOCATED);
       Serial.print( latitude, 6 ); Serial.print("E ");
       Serial.print( longitude, 6 ), Serial.println("N\n\n "); // bearing, speed );
       break;
@@ -50,7 +53,7 @@ void TinyGPS::loop( bool nmea) {
   if (( latitude >= 0 ) && ( longitude >= 0 ))
     vessel.update( latitude, longitude, bearing, speed, updated );
   if ( nmea && !( str.length() ==0 )) {
-     data.sendNMEA(TINY_GPS, TINY_GPS_ID, str );
+     data.sendNMEA(TINY_GPS_ID, TINY_GPS, str );
   }
   //if ( gps.failedChecksum() ) {
   //  Serial.print(F("Sentences that failed checksum="));

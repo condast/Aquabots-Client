@@ -42,7 +42,8 @@ class WebClient {
       NMEA = 8,
       OPTIONS = 9,
       LOG = 10,
-      WAYPOINT = 11
+      WAYPOINT = 11,
+      IMU_DOF = 12
      };
 
     const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
