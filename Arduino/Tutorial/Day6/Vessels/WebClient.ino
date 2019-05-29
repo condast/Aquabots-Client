@@ -32,7 +32,7 @@ bool WebClient::connect() {
     connected = result;
     return result;
   } else {
-    //Serial.println(F("failed. "));
+    Serial.println(F("failed. "));
     client.stop();
   }
 }
@@ -72,6 +72,9 @@ void WebClient::requestService( int request ) {
       break;
     case NMEA:
       client.print(F("nmea"));
+      break;
+    case IMU_DOF:
+      client.print(F("imu-data"));
       break;
     case OPTIONS:
       client.print(F("options"));
@@ -115,6 +118,9 @@ void WebClient::logRequestStr( int request ) {
       Serial.print(F("data"));
       break;
     case NMEA:
+      Serial.print(F("nmea"));
+      break;
+    case IMU_DOF:
       Serial.print(F("nmea"));
       break;
     case LOG:

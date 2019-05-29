@@ -8,9 +8,12 @@
 #include "Interrupts.h"
 #include "Options.h"
 #include "Logger.h"
+#include "Data.h"
+#include "IMU_10DoF.h";
 
-#define VESSEL F("Aquaboat")
-#define PASSPHRASE F("AquaPassphrase")
+#define VESSEL_ID F("org.rdm.coe.shuang.ma")
+#define VESSEL F("Shuang Ma")
+#define PASSPHRASE F("ShuangMeGood")
 #define LATITUDE 51.2
 #define LONGITUDE 4.2
 #define TIME_OUT 3000 //msec
@@ -19,10 +22,12 @@
 static WebClient webClient;
 static Registration registration;
 static TinyGPS gps;
+static Imu10DoF imu10dof;
 static Vessel vessel;
 static Interrupts interrupt;
 static Options options;
 static Logger logger;
+static Data data;
 
 long vesselId;
 int load;
@@ -33,16 +38,18 @@ void setup() {
   vesselId = -1;
   webClient.setup();
   interrupt.setup();
-  options.setup();
-  logger.setup();
   registration.setup();
   gps.setup();
+  imu10dof.setup();
+  options.setup();
+  logger.setup();
   vessel.setup();
   load = 0;
 }
 
 void loop() {
-  gps.loop();
+  gps.loop( vesselId >= 0);
+  imu10dof.loop();
   if ( interrupt.getSecondsFlank()) {
     interrupt.clearSecondsFlank();
     load = ( load + 1 ) % 120;
@@ -53,10 +60,10 @@ void loop() {
         if ( vesselId < 0 ) {
           vesselId =  registration.registerVessel( VESSEL, PASSPHRASE, gps.getLatitude(), gps.getLongitude() );
           if ( vesselId > 0 ) {
-            //Serial.print(F("REGISTERED VESSEL: ")); Serial.println( vesselId );
+            Serial.print(F("REGISTERED VESSEL: ")); Serial.println( vesselId );
             webClient.setAuthentication( vesselId, PASSPHRASE );
-          }// else
-          //  Serial.print(F("REGISTRATION FAILED: ")); Serial.println( vesselId );
+          }else
+            Serial.print(F("REGISTRATION FAILED: ")); Serial.println( vesselId );
         } else {
           //Serial.print(F("VESSEL: ")); Serial.println( vesselId );
           //vessel.loop( gps.getBearing());

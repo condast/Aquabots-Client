@@ -16,6 +16,7 @@ const char server[] = "www.condast.com";
 IPAddress ip(79, 170, 90, 5);
 const int PORT = 8080;
 
+<<<<<<< HEAD
 //HavenLab
 //IPAddress server(192, 168, 10, 101);
 //IPAddress ip(192, 168, 10, 101);
@@ -29,6 +30,11 @@ const int PORT = 8080;
 //Via HUawwei
 //IPAddress server(192, 168, 8, 100);
 //IPAddress ip(192, 168, 8, 100);
+=======
+//LOCALHOST HAVENLAB
+//IPAddress server(192, 168, 10, 101);
+//IPAddress ip(192, 168, 10, 101);
+>>>>>>> branch 'keesp' of https://github.com/condast/Aquabots-Client.git
 //const int PORT = 10080;
 
 // Enter a MAC address for your controller below.
