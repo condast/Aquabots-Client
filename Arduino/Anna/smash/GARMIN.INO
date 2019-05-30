@@ -3,7 +3,7 @@
 
 //Repeatedly feed it characters from your
 void Garmin::setup( ) {
-  enabled = sdcard.readBoolean( CONFIG, GARMIN );
+  //enabled = sdcard.readBoolean( CONFIG, GARMIN );
   Serial.print(F("GARMIN: enabled = ")); Serial.println( enabled);
   if (!enabled )
     return;
@@ -32,4 +32,3 @@ void Garmin::loop() {
   logger.print("GARMIN Connected"); logger.println( sentence);
   data.sendNMEA( GARMIN_ID, GARMIN, sentence );
 }
-

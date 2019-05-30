@@ -16,58 +16,63 @@ void Options::setup( ) {
 /**
    Get log selected
 */
-boolean Options::isLogging() {
+bool Options::isLogging() {
   return ( options & 0x01 ) > 0;
 }
 
 /**
    Get debug selected
 */
-boolean Options::isDebugging() {
+bool Options::isDebugging() {
   return ( options & 0x02 ) > 0;
 }
 
 /**
    Get debug selected
 */
-boolean Options::isAutonomous() {
+bool Options::isAutonomous() {
   return ( options & 10 ) > 0;
 }
 
 /**
    Get visual inspection
 */
-boolean Options::hasVisual() {
+bool Options::hasVisual() {
   return ( options & 20 ) > 0;
 }
 
 /**
    Get visual inspection
 */
-boolean Options::hasBathymetry() {
+bool Options::hasBathymetry() {
   return ( options & 40 ) > 0;
 }
 
 void Options::getOptions() {
-  getOptions( WebClient::OPTIONS, "");
+  getOptions( WebClient::OPTIONS, "", false);
   //Serial.print(F("Get options ")); Serial.println( String( options ));
 }
 
 /**
-   send a log message
+   Get the options
 */
-void Options::getOptions( int request, String msg) {
+bool Options::getOptions( int request, String msg, bool compound) {
   if ( !webClient.connect()) {
-    webClient.disconnect();
+    return false;
   }
-  //Serial.print( "options request: "); Serial.println( msg );
   String message = F("&msg=");
-  message += webClient.urlencode( msg );
+  if ( !compound )
+    message += webClient.urlencode(msg);
+  else
+    message = msg;
+  //Serial.print( "options request ("); Serial.print( request); Serial.print(F("): |" )); Serial.print( msg ); Serial.println("|");
+
+  webClient.setContext( AQUABOTS_OPTIONS_CONTEXT );
   boolean result = webClient.sendHttp( request, false, message );
   if ( !result ) {
     Serial.print(F("Request options failed: ")); Serial.println( msg );
     webClient.disconnect();
-    return;
+    return false;
   }
 
   size_t capacity = JSON_OBJECT_SIZE(1) + 80;
@@ -79,9 +84,9 @@ void Options::getOptions( int request, String msg) {
     return false;
   }
   JsonObject root = doc.as<JsonObject>();
-  Serial.print(F("Parsing failed ")); Serial.print( request );
-  Serial.print(F(" ")); Serial.println( msg );
   options = root["o"];
-  //Serial.print(F("OPTIONS DATA " )); Serial.println(options);
+  //Serial.print(F("OPTIONS DATA " )); Serial.print( request); Serial.print(F(": " )); Serial.println( options);
+  //serializeJson(doc, Serial);
   webClient.disconnect();
+  return true;
 }

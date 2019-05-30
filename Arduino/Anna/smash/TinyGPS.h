@@ -5,23 +5,27 @@
 #define TINY_GPS_ID "gps.tiny"
 
 #include <SoftwareSerial.h>
-#include "AbstractGPS.h"
 #include <TinyGPS++.h>
 
-class TinyGPS : public AbstractGPS{
+class TinyGPS{
 
   private:
     TinyGPSPlus gps;
+    double latitude;
+    double longitude;
+    double bearing;
+    double speed;
 
-  public: TinyGPS(void) : AbstractGPS(){};
+  public: TinyGPS(void){};
     void setup();
-    using AbstractGPS::getBearing;
-    double getBearing( double latFrom, double lonFrom, double latTo, double lonTo ) override;
-    double getDistance( double latFrom, double lonFrom, double latTo, double lonTo ) override;
+    double getLatitude();
+    double getLongitude();
+    double getBearing( double latFrom, double lonFrom, double latTo, double lonTo );
+    double getDistance( double latFrom, double lonFrom, double latTo, double lonTo );
     bool wait();//wait for processing of the nmea sentence
-    void loop() override;
+    
+    //If NMEA is true, nmea messages are transmitted
+    void loop( bool nmea );
 };
 
 #endif
-
-

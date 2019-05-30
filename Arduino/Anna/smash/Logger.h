@@ -1,8 +1,6 @@
 #ifndef Logger_h
 #define Logger_h
 
-#include "Arduino.h"
-
 class Logger {
 
   private: boolean logger = false;
@@ -17,5 +15,3 @@ class Logger {
     };
 
 #endif
-
-

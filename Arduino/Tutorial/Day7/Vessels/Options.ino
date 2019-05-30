@@ -70,7 +70,7 @@ bool Options::getOptions( int request, String msg, bool compound) {
   webClient.setContext( AQUABOTS_OPTIONS_CONTEXT );
   boolean result = webClient.sendHttp( request, false, message );
   if ( !result ) {
-    Serial.print(F("Request options failed: ")); Serial.println( msg );
+    //Serial.print(F("Request options failed: ")); Serial.println( msg );
     webClient.disconnect();
     return false;
   }

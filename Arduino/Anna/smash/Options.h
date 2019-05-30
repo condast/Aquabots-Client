@@ -11,16 +11,15 @@ class Options {
   public: Options(void);
 
     void setup();
-    boolean isLogging();
-    boolean isDebugging();
-    boolean isAutonomous();
-    boolean hasVisual();
-    boolean hasBathymetry();
-    void getOptions( int request, String data );
+    bool isLogging();
+    bool isDebugging();
+    bool isAutonomous();
+    bool hasVisual();
+    bool hasBathymetry();
+    bool getOptions( int request, String data, bool compound );
     void getOptions();
 
-  private: int options;
+  private: long options;
 };
 
 #endif
-

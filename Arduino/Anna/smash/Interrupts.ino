@@ -1,40 +1,26 @@
-int int_counter;
-int min_counter;
+#define TENTH_SECONDS 1
+#define SECONDS 10
 
 //Activate interrupt Timer2
 ISR(TIMER2_COMPA_vect) {
-  vessel.interrupt();
   interrupt.flank = true;
-  if ( interrupt.getLock() )
+  interrupt.int_counter++;
+  interrupt.int_counter %= SECONDS;
+  if ( interrupt.int_counter > 0 )
     return;
-  int_counter++;
-  int_counter %= SECONDS;
-  if ( int_counter == 0 )
-    interrupt.sec_flank = true;
-  else
-    return;
-    
-  interrupt.min_flank = false;
-  interrupt.tensec_flank = false;
-  min_counter++;
-  min_counter %= MINUTES;
-  if ( min_counter == 0)
-    interrupt.min_flank = true;
-  if (( min_counter % TEN_SEC ) == 0)
-    interrupt.tensec_flank = true;
+  interrupt.sec_flank = true;
 }
 
 Interrupts::Interrupts() {};
 
 /**
-   Set timer0 to increment with steps of 10 Hz
+    Set timer0 to increment with steps of 10 Hz
 */
 void Interrupts::setup() {
-  cli();//stop interrupts
-
-  int_counter = 0;
-  min_counter = 0;
   lock = false;
+  flank = false;
+  sec_flank = false;
+  cli();//stop interrupts
 
   //set timer2 interrupt at 2kHz
   TCCR2A = 0;// set entire TCCR2A register to 0
@@ -48,44 +34,33 @@ void Interrupts::setup() {
   TCCR2B |= (1 << CS20) | (1 << CS21) | (1 << CS22);
   // enable timer compare interrupt
   TIMSK2 |= (1 << OCIE2A);
-  clear();
   sei();
 }
 
-void Interrupts::clear() {
-  setLock( true );
-  sec_flank = false;//0.1 seconds
-  min_flank = false;//minutes
-  tensec_flank = false;//10 sec.
-  setLock( false );
+boolean Interrupts::getLock() {
+  return lock;
+}
+
+void Interrupts::setLock( boolean lck ) {
+  lock = lck;
+}
+
+int Interrupts::getCounter() {
+  return int_counter;
+}
+
+boolean Interrupts::getFlank() {
+  return flank;
+}
+
+boolean Interrupts::getSecondsFlank() {
+  return sec_flank;
+}
+
+void Interrupts::clearSecondsFlank() {
+  sec_flank = false;
 }
 
 void Interrupts::clearFlank() {
   flank = false;
-}
-bool Interrupts::getLock() {
-  return lock;
-}
-
-void Interrupts::setLock( bool lck ) {
-  lock = lck;
-}
-
-/**
- * Is set every 10 Hz
- */
-bool Interrupts::getFlank() {
-  return flank;
-}
-
-bool Interrupts::getSecondsFlank() {
-  return sec_flank;
-}
-
-bool Interrupts::getMinutesFlank() {
-  return min_flank;
-}
-
-bool Interrupts::getTenSecondsFlank() {
-  return tensec_flank;
 }
