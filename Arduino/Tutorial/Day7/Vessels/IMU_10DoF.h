@@ -9,9 +9,9 @@
 #include "MPU9250.h"
 #include "BMP280.h"
 
-#define IMU_10_DOF_ID "com.seeed.grove.imu10dof"
-#define IMU_10_DOF "IMU_10_DOF"
-#define IMU_10_DOF_DATA "imu-data"
+#define IMU_10_DOF_ID F("com.seeed.grove.imu10dof")
+#define IMU_10_DOF F("IMU_10_DOF")
+#define IMU_10_DOF_DATA F("imu-data")
 
 #define SAMPLE_NUM_MDATE  5000
 

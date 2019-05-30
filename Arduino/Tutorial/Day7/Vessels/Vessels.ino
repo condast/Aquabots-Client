@@ -9,7 +9,8 @@
 #include "Options.h"
 #include "Logger.h"
 #include "Data.h"
-#include "IMU_10DoF.h";
+#include "CompassHMC5883L.h"
+#include "IMU_10DoF.h"
 
 #define VESSEL_ID F("org.rdm.coe.shuang.ma")
 #define VESSEL F("Shuang Ma")
@@ -22,7 +23,8 @@
 static WebClient webClient;
 static Registration registration;
 static TinyGPS gps;
-static Imu10DoF imu10dof;
+static CompassHMC5883L compassModule;
+static Imu10DoF imu10dofModule;
 static Vessel vessel;
 static Interrupts interrupt;
 static Options options;
@@ -40,7 +42,8 @@ void setup() {
   interrupt.setup();
   registration.setup();
   gps.setup();
-  imu10dof.setup();
+  compassModule.setup();
+  imu10dofModule.setup();
   options.setup();
   logger.setup();
   vessel.setup();
@@ -49,7 +52,8 @@ void setup() {
 
 void loop() {
   gps.loop( vesselId >= 0);
-  imu10dof.loop();
+  compassModule.loop();
+  imu10dofModule.loop();
   if ( interrupt.getSecondsFlank()) {
     interrupt.clearSecondsFlank();
     load = ( load + 1 ) % 120;

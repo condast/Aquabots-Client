@@ -153,6 +153,6 @@ void Imu10DoF::loop() {
   Serial.print(F("IMU Board: t(")); Serial.print( temperature ); Serial.print(F("), P(")); Serial.print( pressure ); Serial.print(F("), alt(")); Serial.println( altitude );
   Serial.print(F("Compass: ")); Serial.println( getHeading() );
   String str = "a=" + String( altitude ) + ";p=" + String( pressure ) + ";t=" + String( temperature );// + F(",c=") + pressure + 
-  data.send(WebClient::IMU_DOF, IMU_10_DOF, IMU_10_DOF_ID, IMU_10_DOF_DATA, str );
+  data.send(WebClient::DATA, IMU_10_DOF_ID, IMU_10_DOF, IMU_10_DOF_DATA, str );
 
 }

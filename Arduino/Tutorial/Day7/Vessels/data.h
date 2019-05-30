@@ -1,6 +1,8 @@
 #ifndef Data_h
 #define Data_h
 
+#define REQ_NMEA F("nmea")
+
 class Data {
 
   public: Data(void);
