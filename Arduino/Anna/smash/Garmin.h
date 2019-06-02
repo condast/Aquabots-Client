@@ -4,8 +4,8 @@
 #include "Arduino.h"
 #include "Vessel.h"
 
-#define GARMIN_ID "bathymetry.garmin.ds70"
-#define GARMIN "GARMIN"
+#define GARMIN_ID "com.garmin.echobeam.echobeam.sonar"
+#define GARMIN "GARMIN ECHOBEAM DS70 SONAR"
 
 class Garmin {
 
@@ -17,5 +17,3 @@ class Garmin {
 };
 
 #endif
-
-

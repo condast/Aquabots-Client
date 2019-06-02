@@ -67,10 +67,7 @@ void Vessel::setCourse( double heading, double thrst ) {
   controller.loop( heading, thrst );
   Serial.print(F("\nCourse updated (")); Serial.print( bearing); Serial.print(F(", "));
   Serial.print( thrst ); Serial.println(F(")\n"));
-  String log = "COURSE(" + String(heading) + ", " + String(thrst)
-  logger.println
 }
-
 
 /**
    Send the current location and get a stack with the next steps to take.
@@ -83,9 +80,9 @@ bool Vessel::update( double latitde, double longitde, double bearing, double spe
   data.latitude = latitde;
   data.longitude = longitde;
   String url = F("&lo=");
-  url += String( data.longitude, 8 );
+  url += String( longitde, 20 );
   url += F("&la=");
-  url += String( data.latitude, 8);
+  url += String( latitde, 20);
   url += F("&b=");
   url += bearing;
   url += F("&s=");
@@ -216,26 +213,10 @@ void Vessel::stop() {
   speed = 0;
 }
 
-void Vessel::interrupt() {
-  if ( !enable )
-    return;
-
-  if ( maintenance ) {
-    setCourse( 0, -5 );
-    //runMaintenance( counter );
-    return;
-  }
-
-  //bearing = brng;
-  //Serial.print( "Running vessel, bearing "); Serial.print( brng); Serial.print( " thrust "); Serial.println( thrust );
-  //setCourse( brng, thrust );
-  //getWaypoint();
-}
-
 void Vessel::loop( double heading) {
   if ( !enable )
     return;
-  int calc = (int)(360 + data.heading - bearing);
+  int calc = (int)(360 + data.heading - bearing); 
   double diff = calc % 360;
   double hd = ( data.manual ) ? angle : heading;
   Serial.print(F("VESSEL: (")); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));

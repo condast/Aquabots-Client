@@ -13,34 +13,15 @@ const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
 
 //Condast SERVER
 // Set the static IP address to use if the DHCP fails to assign
-const char server[] = "www.condast.com";
-IPAddress ip(79, 170, 90, 5);
-const int PORT = 8080;
-
-//HavenLab
-//IPAddress server(192, 168, 10, 101);
-//IPAddress ip(192, 168, 10, 101);
-//const int PORT = 10080;
-
-//RDM Inno WiFi
-//IPAddress server(172, 31, 81, 172);
-//IPAddress ip(172, 31, 81, 172);
-//const int PORT = 10080;
-
-//Via HUawwei
-//IPAddress server(192, 168, 8, 100);
-//IPAddress ip(192, 168, 8, 100);
-
-//LOCALHOST HAVENLAB
-//IPAddress server(192, 168, 10, 100);
-//IPAddress ip(192, 168, 10, 100);
-//const int PORT = 10080;
+//const char server[] = "www.condast.com";
+//IPAddress ip(79, 170, 90, 5);
+//const int PORT = 8080;
 
 //LOCALHOST DEVENTER
 // Set the static IP address to use if the DHCP fails to assign
-//IPAddress server(192, 168, 178, 41);
-//IPAddress ip(192, 168, 178, 41);
-//const int PORT = 10080;
+IPAddress server(192, 168, 178, 41);
+IPAddress ip(192, 168, 178, 41);
+const int PORT = 10080;
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
@@ -61,7 +42,8 @@ class WebClient {
       NMEA = 8,
       OPTIONS = 9,
       LOG = 10,
-      WAYPOINT = 11
+      WAYPOINT = 11,
+      IMU_DOF = 12
      };
 
     const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
