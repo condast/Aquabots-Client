@@ -132,6 +132,8 @@ bool Vessel::getWaypoint() {
   if ( ! webClient.connect()) {
     return false;
   }
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
+    Serial.print(F("GETTING WAYPOINTS: "));
   boolean result = webClient.sendHttp( WebClient::WAYPOINT, false, url );
   if ( !result ) {
     webClient.disconnect();
@@ -153,6 +155,8 @@ bool Vessel::getWaypoint() {
     return false;
   }
   int index = root[F("i")];
+  if ( index > sizeof( waypoints ))
+    return false;
   char* chr_arr = root[F("nm")];
   //sdcard.writeToIndex( WAYPOINTS_FILE, index, buffer );
   Waypoint wp;
@@ -163,6 +167,7 @@ bool Vessel::getWaypoint() {
   wp.last = root["last"];
   waypoints[index] = wp;
   webClient.disconnect();
+    Serial.print(F("WAYPOINTS RECEIVED: ")); Serial.println(index);
   return true;
 }
 
@@ -170,23 +175,23 @@ bool Vessel::getWaypoint() {
    Send the current location and get a stack with the next steps to take.
    The first latlnh should be entered last, so that the can be popped
 */
-bool Vessel::updateWaypoints( ) {
+bool Vessel::updateWaypoints( int index ) {
   Serial.print(F("UPDATE WAYPOINTS: "));
-
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
   if ( ! webClient.connect()) {
     //webClient.disconnect();
     return false;
   }
   boolean result = false;
   if ( webClient.client.connected() ) {
-    result = webClient.sendHttp( WebClient::WAYPOINTS, false, "");
+    result = webClient.sendHttp( WebClient::WAYPOINTS, false, String( index ));
     if (!result ) {
       webClient.disconnect();
       setCourse(0, 0);
       return result;
     }
 
-    size_t capacity = JSON_OBJECT_SIZE(9) + 100;
+    size_t capacity = JSON_OBJECT_SIZE(6) + 100;
     DynamicJsonDocument doc(capacity);
     DeserializationError error = deserializeJson(doc, webClient.client);
     if (error) {
@@ -196,18 +201,23 @@ bool Vessel::updateWaypoints( ) {
       return false;
     }
     JsonObject root = doc.as<JsonObject>();
-    data.heading = root["h"];
-    data.thrust = root["t"];
-    data.time = root["tm"];
+    int i = root["i"];
+    char* chr_arr = root[F("nm")];
+    waypoints[i].name = String( chr_arr);
+    waypoints[i].latitude = root[F("la")];
+    waypoints[i].longitude = root[F("lo")];
+    waypoints[i].complete = root[F("cp")];
+    waypoints[i].last = root[F("last")];
     webClient.disconnect();
+    Serial.print(F("WAYPOINTS RECEIVED: ")); Serial.println(index);
     result = true;
   }
-  setCourse( data.heading, data.thrust);
+  //setCourse( data.heading, data.thrust);
   return result;
 }
 
 void Vessel::stop() {
-  Serial.println("\n\nSTOPPING!!!");
+  Serial.println("\n\nSTOPPING!");
   controller.stop();
   bearing = 0;
   speed = 0;
@@ -216,7 +226,7 @@ void Vessel::stop() {
 void Vessel::loop( double heading) {
   if ( !enable )
     return;
-  int calc = (int)(360 + data.heading - bearing); 
+  int calc = (int)(360 + data.heading - bearing);
   double diff = calc % 360;
   double hd = ( data.manual ) ? angle : heading;
   Serial.print(F("VESSEL: (")); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));

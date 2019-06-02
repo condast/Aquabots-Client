@@ -59,7 +59,7 @@ class Vessel {
     //Servo referenceServo; //The Anna uses two motors, of which this one controls the reference
     //Servo speedServo;  // create servo object to control the speed
     bool runMaintenance( unsigned int counter );
-    bool updateWaypoints();
+    bool updateWaypoints( int index );
 };
 
 #endif

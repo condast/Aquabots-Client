@@ -32,7 +32,7 @@ void TinyGPS::loop( bool nmea) {
   while (Serial1.available() && ( millis() < ( current + TIME_OUT  ))) {
     char chr = Serial1.read();
     //readNMEA( chr );
-    Serial.print(chr );
+    //Serial.print(chr );
     str += chr;
     gps.encode( chr );
     updated = gps.location.isUpdated();

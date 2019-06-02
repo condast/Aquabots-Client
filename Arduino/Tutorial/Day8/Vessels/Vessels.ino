@@ -53,7 +53,8 @@ void setup() {
 }
 
 void loop() {
-  gps.loop( vesselId >= 0);
+  bool enabled = ( vesselId >= 0);
+  gps.loop( enabled );
   compassModule.loop();
   imu10dofModule.loop();
   if ( interrupt.getSecondsFlank()) {
@@ -83,6 +84,15 @@ void loop() {
       case 2:
         //Serial.println( "Aquabots message" );
         logger.println("HELLO AQUABOTS");
+        break;
+      case 3:
+        //Serial.println( "Aquabots message" );
+        voltage.loop();
+        break;
+      case 8:
+        if( enabled )
+          vessel.getWaypoint();
+        //Serial.println( "OPTIONS RECEIVED" );
         break;
       case 9:
         options.getOptions();

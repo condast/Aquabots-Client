@@ -10,7 +10,7 @@
 class Voltage {
 
   private: 
-  int analogPin = A3; //analog pin 3
+  int analogPin = A1; //analog pin 3
   float val;
 
   public: Voltage(void);
