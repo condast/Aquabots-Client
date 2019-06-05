@@ -226,10 +226,10 @@ void Vessel::stop() {
 void Vessel::loop( double heading) {
   if ( !enable )
     return;
-  int calc = (int)(360 + data.heading - bearing);
-  double diff = calc % 360;
-  double hd = ( data.manual ) ? angle : heading;
-  Serial.print(F("VESSEL: (")); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
+  logger.println( "Course: " + heading );
+  double diff = (int)(bearing -data.heading);
+  double hd = ( data.manual ) ? angle : diff;
+  Serial.print(F("VESSEL: (")); Serial.print( heading ); Serial.print( ", "); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
   controller.loop( hd, data.thrust );
 }
 

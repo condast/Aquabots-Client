@@ -16,7 +16,10 @@ double TinyGPS::getLongitude() {
   return longitude;
 }
 
-double TinyGPS::getBearing( double latFrom,  double lonFrom, double latTo, double lonTo ) {
+double TinyGPS::getHeading() {
+  return heading;
+}
+double TinyGPS::getHeading( double latFrom,  double lonFrom, double latTo, double lonTo ) {
   return gps.courseTo( latFrom, lonFrom, latTo, lonTo );
 }
 
@@ -37,10 +40,9 @@ void TinyGPS::loop( bool enabled) {
     gps.encode( chr );
     updated = gps.location.isUpdated();
     if ( updated ) {
-
       latitude = gps.location.lat();
       longitude = gps.location.lng();
-      bearing = gps.course.deg();
+      heading = gps.course.deg();
       speed = gps.speed.mps();
       logger.println( GPS_LOCATED);
       Serial.print(GPS_LOCATED);
@@ -51,9 +53,9 @@ void TinyGPS::loop( bool enabled) {
   }
 
   if (( latitude >= 0 ) && ( longitude >= 0 ))
-    vessel.update( latitude, longitude, bearing, speed, updated );
-  if ( enabled && !( str.length() ==0 )) {
-     data.sendNMEA(TINY_GPS_ID, TINY_GPS, str );
+    vessel.update( latitude, longitude, heading, speed, updated );
+  if ( enabled && !( str.length() == 0 )) {
+    data.sendNMEA(TINY_GPS_ID, TINY_GPS, str );
   }
   //if ( gps.failedChecksum() ) {
   //  Serial.print(F("Sentences that failed checksum="));

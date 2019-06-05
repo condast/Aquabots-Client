@@ -66,7 +66,7 @@ bool ServoController::isReady() {
    (181-360)  => 0 - 90
 */
 double ServoController::getCorrectedAngle( double a ) {
-  return ( a <= 180 ) ? map( a, 0, 180, 90, 180) : map( a, 180, 360, 0, 90);
+  return 90 + a;
 }
 
 /**

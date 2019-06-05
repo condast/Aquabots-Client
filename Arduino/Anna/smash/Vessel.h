@@ -41,7 +41,7 @@ class Vessel {
     void setAutonomy( bool autonomy );
     bool update( double latitude, double longitude, double bearing, double speed, bool updated );
     bool getWaypoint();
-    void loop( double bearing);
+    void loop( bool enable, double bearing);
     void interrupt();
     //void interrupt( unsigned int loopCounter );
     void stop();

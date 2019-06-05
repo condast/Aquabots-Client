@@ -22,9 +22,9 @@ class Compass {
   public: Compass(void);
     void setFilter( int amount );
     float getFiltered();
-    float getBearing();
+    float getHeading();
     void setup();
-    void loop( bool enabled );
+    void loop( );
 };
 
 #endif

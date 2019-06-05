@@ -67,8 +67,7 @@ void Vessel::setCourse( double heading, double thrst ) {
   controller.loop( heading, thrst );
   Serial.print(F("\nCourse updated (")); Serial.print( bearing); Serial.print(F(", "));
   Serial.print( thrst ); Serial.println(F(")\n"));
-  String log = "COURSE(" + String(heading) + ", " + String(thrst)
-  logger.println
+  String log = "COURSE(" + String(heading) + ", " + String(thrst);
 }
 
 
@@ -232,14 +231,15 @@ void Vessel::interrupt() {
   //getWaypoint();
 }
 
-void Vessel::loop( double heading) {
+void Vessel::loop( bool enable, double heading) {
   if ( !enable )
     return;
-  int calc = (int)(360 + data.heading - bearing);
-  double diff = calc % 360;
-  double hd = ( data.manual ) ? angle : heading;
-  Serial.print(F("VESSEL: (")); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
-  controller.loop( hd, data.thrust );
+  bearing = heading;
+  double diff = data.heading - heading;
+  double hd = ( data.manual ) ? angle : diff;
+  Serial.print(F("VESSEL: (")); Serial.print( heading ); Serial.print( ", "); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
+  logger.println("");
+  controller.loop(  hd, data.thrust );
 }
 
 /*

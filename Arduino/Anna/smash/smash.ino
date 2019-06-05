@@ -1,5 +1,5 @@
 #include <ArduinoJson.h>
-
+#include <SoftwareSerial.h>
 #include "WebClient.h"
 #include "Registration.h"
 #include "TinyGPS.h"
@@ -56,12 +56,12 @@ void setup() {
 void loop() {
   bool enabled = ( vesselId >= 0 );
   gps.loop( enabled);
-  compassModule.loop( enabled );
+  compassModule.loop( );
   //imu10DofModule.loop();
   if ( interrupt.getSecondsFlank()) {
     interrupt.clearSecondsFlank();
     load = ( load + 1 ) % 120;
-    int balance = ( !enabled)? 0: load%REFRESH;
+    int balance = ( !enabled) ? 0 : load % REFRESH;
     //Serial.println( balance );
     switch ( balance ) {
       case 0:
@@ -70,12 +70,10 @@ void loop() {
           if ( vesselId >= 0 ) {
             Serial.print(F("REGISTERED VESSEL: ")); Serial.println( vesselId );
             webClient.setAuthentication( vesselId, PASSPHRASE );
-          }else
+          } else
             Serial.print(F("REGISTRATION FAILED: ")); Serial.println( vesselId );
-        } else {
-          //Serial.print(F("VESSEL: ")); Serial.println( vesselId );
-          //vessel.loop( gps.getBearing());
         }
+        //Serial.print(F("VESSEL: ")); Serial.println( vesselId );
         delay(1000);
         break;
       case 1:
@@ -93,5 +91,7 @@ void loop() {
       default:
         break;
     }
+    Serial.println( "\n\nUPDATING VESSEL" );
+    vessel.loop( enabled, compassModule.getHeading());
   }
 }
