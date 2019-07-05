@@ -29,6 +29,7 @@
 
 // Reference the I2C Library
 #include <Wire.h>
+#include "CompassHMC5883L.h"
 
 CompassHMC5883L::CompassHMC5883L() {};
 

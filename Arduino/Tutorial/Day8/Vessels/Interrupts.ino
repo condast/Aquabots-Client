@@ -9,6 +9,7 @@ ISR(TIMER2_COMPA_vect) {
   if ( interrupt.int_counter > 0 )
     return;
   interrupt.sec_flank = true;
+  vessel.loop( compassModule.getHeading());
 }
 
 Interrupts::Interrupts() {};

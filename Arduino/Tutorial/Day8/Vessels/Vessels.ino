@@ -9,7 +9,7 @@
 #include "Options.h"
 #include "Logger.h"
 #include "Data.h"
-#include "CompassHMC5883L.h"
+#include "CompassBMM150.h"
 #include "IMU_10DoF.h"
 #include "Voltage.h"
 
@@ -24,7 +24,7 @@
 static WebClient webClient;
 static Registration registration;
 static TinyGPS gps;
-static CompassHMC5883L compassModule;
+static CompassBMM150 compassModule;
 static Imu10DoF imu10dofModule;
 static Vessel vessel;
 static Interrupts interrupt;

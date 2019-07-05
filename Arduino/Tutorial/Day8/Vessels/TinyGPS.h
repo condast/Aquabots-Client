@@ -13,14 +13,14 @@ class TinyGPS{
     TinyGPSPlus gps;
     double latitude;
     double longitude;
-    double bearing;
+    double heading;
     double speed;
 
   public: TinyGPS(void){};
     void setup();
     double getLatitude();
     double getLongitude();
-    double getBearing( double latFrom, double lonFrom, double latTo, double lonTo );
+    double getHeading( double latFrom, double lonFrom, double latTo, double lonTo );
     double getDistance( double latFrom, double lonFrom, double latTo, double lonTo );
     bool wait();//wait for processing of the nmea sentence
     
