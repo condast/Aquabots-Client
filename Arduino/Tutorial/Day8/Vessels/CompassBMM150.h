@@ -17,11 +17,11 @@ class CompassBMM150 {
     bmm150_mag_data value;
     int error;
     double heading;
-    void Output(float heading, float headingDegrees);
-  public: CompassBMM150(void);
+   public: CompassBMM150(void);
     void setup();
     double getHeading();
     void loop();
+   void output();
 };
 
 #endif

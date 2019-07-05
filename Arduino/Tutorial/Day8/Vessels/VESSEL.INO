@@ -201,7 +201,6 @@ bool Vessel::updateWaypoints( int index ) {
     Serial.print(F("WAYPOINTS RECEIVED: ")); Serial.println(index);
     result = true;
   }
-  //setCourse( data.heading, data.thrust);
   return result;
 }
 

@@ -83,10 +83,14 @@ void loop() {
         break;
       case 2:
         //Serial.println( "Aquabots message" );
-        logger.println("HELLO AQUABOTS");
+        logger.println(F("HELLO AQUABOTS"));
         break;
       case 3:
         //Serial.println( "Aquabots message" );
+        compassModule.output();
+        String str = F("COMPASS:");
+        str += compassModule.getHeading();
+        logger.println( str );
         voltage.loop();
         break;
       case 8:

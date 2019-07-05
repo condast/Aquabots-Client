@@ -66,14 +66,7 @@ void CompassBMM150::loop()
     heading += 2*PI;
   if(heading > 2*PI)
     heading -= 2*PI;
-  float headingDegrees = heading * 180/M_PI;
-  float xyHeadingDegrees = xyHeading * 180 / M_PI;
-  float zxHeadingDegrees = zxHeading * 180 / M_PI;
-
-  Serial.print("Heading: ");
-  Serial.println(headingDegrees);
-
-  delay(100);}
+}
 
 // Convert radians to degrees for readability.
 double CompassBMM150::getHeading() {
@@ -81,10 +74,15 @@ double CompassBMM150::getHeading() {
 }
 
 // Output the data down the serial port.
-void CompassBMM150::Output(float heading, float headingDegrees)
+void CompassBMM150::output()
 {
+  float xyHeading = atan2(value.x, value.y);
+  float zxHeading = atan2(value.z, value.x);
+  float headingDegrees = heading * 180/M_PI;
+  float xyHeadingDegrees = xyHeading * 180 / M_PI;
+  float zxHeadingDegrees = zxHeading * 180 / M_PI;
   //Serial.print("Compass: "); Serial.println( getHeading() );
-  String str = "c=" + String( getHeading()) + ";";
+  String str = "c=" + String( headingDegrees) + ";";
   str += "r=" + String( value.x ) + "," + String( value.y ) + "," + String( value.z );
   data.send(WebClient::DATA, BMM150_COMPASS_ID, BMM150_COMPASS, BMM150_COMPASS_DATA, str );
 }
