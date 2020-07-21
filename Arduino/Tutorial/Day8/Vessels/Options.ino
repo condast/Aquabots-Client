@@ -17,21 +17,23 @@ void Options::setup( ) {
    Get log selected
 */
 bool Options::isLogging() {
-  return ( options & 0x01 ) > 0;
+  unsigned int mask = 1<<0x09;
+  return ( options & mask ) > 0;
 }
 
 /**
    Get debug selected
 */
 bool Options::isDebugging() {
-  return ( options & 0x02 ) > 0;
+  unsigned int mask = 1<<0x10;
+  return ( options & mask ) > 0;
 }
 
 /**
    Get debug selected
 */
 bool Options::isAutonomous() {
-  return ( options & 10 ) > 0;
+  return ( options & 0x05 ) > 0;
 }
 
 /**
@@ -45,7 +47,7 @@ bool Options::hasVisual() {
    Get visual inspection
 */
 bool Options::hasBathymetry() {
-  return ( options & 40 ) > 0;
+  return ( options & 0x06 ) > 0;
 }
 
 void Options::getOptions() {
@@ -75,11 +77,11 @@ bool Options::getOptions( int request, String msg, bool compound) {
     return false;
   }
 
-  size_t capacity = JSON_OBJECT_SIZE(1) + 80;
+  size_t capacity = JSON_OBJECT_SIZE(5) + 112;
   DynamicJsonDocument doc(capacity);
   DeserializationError error = deserializeJson(doc, webClient.client);
   if (error) {
-    Serial.println(F("Parsing update failed!"));
+    Serial.print(F("Parsing options failed!")); Serial.println( error.c_str() );
     webClient.disconnect();
     return false;
   }

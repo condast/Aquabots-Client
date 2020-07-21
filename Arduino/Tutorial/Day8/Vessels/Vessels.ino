@@ -2,6 +2,7 @@
 
 #include "WebClient.h"
 #include "Registration.h"
+#include "Field.h"
 #include "TinyGPS.h"
 #include "Vessel.h"
 #include "ServoController.h"
@@ -23,6 +24,7 @@
 
 static WebClient webClient;
 static Registration registration;
+static Field field;
 static TinyGPS gps;
 static CompassBMM150 compassModule;
 static Imu10DoF imu10dofModule;
@@ -44,6 +46,7 @@ void setup() {
   interrupt.setup();
   registration.setup();
   gps.setup();
+  field.setup();
   compassModule.setup();
   imu10dofModule.setup();
   options.setup();
@@ -78,6 +81,8 @@ void loop() {
         delay(1000);
         break;
       case 1:
+        if( enabled )
+          field.loop( gps.getLatitude(), gps.getLongitude());
         logger.setup();
         //Serial.println( "LOGGER SETUP COMPLETE" );
         break;
@@ -100,7 +105,7 @@ void loop() {
         break;
       case 9:
         options.getOptions();
-        //Serial.println( "OPTIONS RECEIVED" );
+        Serial.println( "OPTIONS RECEIVED" );
         break;
       default:
         break;

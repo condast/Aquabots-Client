@@ -66,6 +66,7 @@ bool Vessel::runMaintenance( unsigned int counter ) {
    The first latlnh should be entered last, so that the can be popped
 */
 bool Vessel::update( double latitde, double longitde, bool updated ) {
+  //Serial.println(F("UPDATED: "));
   if ( ! webClient.connect() )
     return false;
   webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
@@ -93,11 +94,12 @@ bool Vessel::update( double latitde, double longitde, bool updated ) {
   //String response = webClient.printResponse( WebClient::UPDATE );
   //Serial.print(F("\n\nHEADING: \n")); Serial.println( response);
 
-  size_t capacity = JSON_OBJECT_SIZE(11) + 79;
+  size_t capacity = JSON_OBJECT_SIZE(8) + 80;
   DynamicJsonDocument doc(capacity);
   DeserializationError error = deserializeJson(doc, webClient.client);
   if (error) {
-    Serial.println(F("Parsing update failed!"));
+    Serial.print(F("Parsing update failed!")); Serial.println( error.c_str() );
+    doc.clear();
     webClient.disconnect();
     return false;
   }
@@ -105,7 +107,10 @@ bool Vessel::update( double latitde, double longitde, bool updated ) {
   data.bearing = root["b"];
   data.thrust = root["t"];
   data.time = root["tm"];
+  data.active = root["a"];
+  Serial.print(F("DATA: ")); Serial.println(  data.active );
   data.manual = root["mn"];
+  doc.clear();
   webClient.disconnect();
   return true;
 }
@@ -124,7 +129,7 @@ bool Vessel::getWaypoint() {
     return false;
   }
   webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
-    Serial.print(F("GETTING WAYPOINTS: "));
+  Serial.print(F("GETTING WAYPOINTS: "));
   boolean result = webClient.sendHttp( WebClient::WAYPOINT, false, url );
   if ( !result ) {
     webClient.disconnect();
@@ -134,15 +139,16 @@ bool Vessel::getWaypoint() {
   DynamicJsonDocument doc(capacity);
   DeserializationError error = deserializeJson(doc, webClient.client);
   if (error) {
-    Serial.println(F("Parsing update failed!"));
+    Serial.print(F("Parsing Waypoint failed!")); Serial.println( error.c_str() );
+   doc.clear();
     webClient.disconnect();
     return false;
   }
   JsonObject root = doc.as<JsonObject>();
-
   if ( root.size() < 1 ) {
     webClient.disconnect();
     stop();
+    doc.clear();
     return false;
   }
   int index = root[F("i")];
@@ -158,7 +164,8 @@ bool Vessel::getWaypoint() {
   wp.last = root["last"];
   waypoints[index] = wp;
   webClient.disconnect();
-    Serial.print(F("WAYPOINTS RECEIVED: ")); Serial.println(index);
+  doc.clear();
+  Serial.print(F("WAYPOINTS RECEIVED: ")); Serial.println(index);
   return true;
 }
 
@@ -185,7 +192,8 @@ bool Vessel::updateWaypoints( int index ) {
     DynamicJsonDocument doc(capacity);
     DeserializationError error = deserializeJson(doc, webClient.client);
     if (error) {
-      Serial.println(F("Parsing update failed!"));
+    Serial.print(F("Parsing update waypoints failed!")); Serial.println( error.c_str() );
+     doc.clear();
       webClient.disconnect();
       return false;
     }
@@ -197,6 +205,7 @@ bool Vessel::updateWaypoints( int index ) {
     waypoints[i].longitude = root[F("lo")];
     waypoints[i].complete = root[F("cp")];
     waypoints[i].last = root[F("last")];
+    doc.clear();
     webClient.disconnect();
     Serial.print(F("WAYPOINTS RECEIVED: ")); Serial.println(index);
     result = true;
@@ -204,38 +213,22 @@ bool Vessel::updateWaypoints( int index ) {
   return result;
 }
 
+//Is used in the loop function
 void Vessel::stop() {
-  Serial.println("\n\nSTOPPING!");
+  //Serial.println("\n\nSTOPPING!");
   controller.stop();
   speed = 0;
 }
 
 void Vessel::loop( double headng) {
   heading = headng;
-  if ( !enable )
+  if (!enable || !data.active ) {
+    stop();
     return;
+  }
   //logger.println( "Course: " + heading );
   double diff = (int)(heading - data.bearing);
   double hd = ( data.manual ) ? angle : diff;
   //Serial.print(F("VESSEL: (")); Serial.print( heading ); Serial.print( ", "); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
   controller.loop( hd, data.thrust );
 }
-
-/*
-  void Vessel::interrupt( unsigned int loopCounter ) {
-  //synchronize();
-  if ( !enable || ( loopCounter < LOOP_TIMEOUT ))
-    return;
-    Waypoint wp;
-    for( int i=0; i<MAX_WAYPOINTS; i++ ){
-      wp = waypoints[i];
-      if( wp.complete == true )
-        continue;
-      double distance = tinyGPS.getDistance( latitude, longitude, wp.latitude, wp.longitude );
-      double courseTo =   tinyGPS.getBearing( data.latitude, data.longitude, wp.latitude, wp.longitude );
-      double newThrust = ( wp.last && ( distance < range ))? (thrust*distance/range): thrust;
-      setCourse( courseTo, newThrust );
-    }
-  //getWaypoint();
-*/
-//}
