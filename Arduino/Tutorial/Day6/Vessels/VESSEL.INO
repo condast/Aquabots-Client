@@ -34,18 +34,18 @@ bool Vessel::runMaintenance( unsigned int counter ) {
   if (!enable || !maintenance )
     return true;
   bool ready = controller.isReady();
-  controller.loop( bearing, data.thrust);
   int thrust = 0;
   Serial.print(F("MAINTENANCE: ")); Serial.println( ready );
+  double heading = 0;
   if ( counter > 0) {
     Serial.print(F("COUNTING: ")); Serial.print( counter );
     if ( counter < 720 ) {
       int cnt_bearing = counter % 720;
-      bearing = ( cnt_bearing < 360 ) ? cnt_bearing++ : cnt_bearing--;
-      bearing = ( bearing > 360 ) ? 0 : ( bearing < -360) ? 0 : bearing;
-      Serial.print(F(" BEARING ")); Serial.print( bearing ); // Serial.print(F(", TURN ")); Serial.println( turn_active );
+      heading = ( cnt_bearing < 360 ) ? cnt_bearing++ : cnt_bearing--;
+      heading = ( heading > 360 ) ? 0 : ( heading < -360) ? 0 : heading;
+      Serial.print(F(" HEADING ")); Serial.print( heading ); // Serial.print(F(", TURN ")); Serial.println( turn_active );
     } else if ( counter < 820 ) {
-      bearing = 0;
+      heading = 0;
       Serial.print(F("THRUST INCREASING")); Serial.println( thrust );
       thrust++;
     } else if ( counter < 1020 ) {
@@ -57,23 +57,16 @@ bool Vessel::runMaintenance( unsigned int counter ) {
     }
     counter %= 1120;
   }
-  setCourse( 0, 40 );
+  controller.loop( heading, data.thrust);
   return true;
-}
-
-void Vessel::setCourse( double heading, double thrst ) {
-  // Serial.print(F("Bearing: ")); Serial.print( bearing ); Serial.print(F(", Thrust: ")); Serial.println( thrst );
-  bearing = heading;
-  controller.loop( heading, thrst );
-  Serial.print(F("\nCourse updated (")); Serial.print( bearing); Serial.print(F(", "));
-  Serial.print( thrst ); Serial.println(F(")\n"));
 }
 
 /**
    Send the current location and get a stack with the next steps to take.
    The first latlnh should be entered last, so that the can be popped
 */
-bool Vessel::update( double latitde, double longitde, double bearing, double speed, bool updated ) {
+bool Vessel::update( double latitde, double longitde, bool updated ) {
+  //Serial.println(F("UPDATED: "));
   if ( ! webClient.connect() )
     return false;
   webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
@@ -83,8 +76,8 @@ bool Vessel::update( double latitde, double longitde, double bearing, double spe
   url += String( longitde, 20 );
   url += F("&la=");
   url += String( latitde, 20);
-  url += F("&b=");
-  url += bearing;
+  url += F("&h=");
+  url += heading;
   url += F("&s=");
   url += speed;
   url += F("&u=");
@@ -101,21 +94,24 @@ bool Vessel::update( double latitde, double longitde, double bearing, double spe
   //String response = webClient.printResponse( WebClient::UPDATE );
   //Serial.print(F("\n\nHEADING: \n")); Serial.println( response);
 
-  size_t capacity = JSON_OBJECT_SIZE(11) + 79;
+  size_t capacity = JSON_OBJECT_SIZE(8) + 80;
   DynamicJsonDocument doc(capacity);
   DeserializationError error = deserializeJson(doc, webClient.client);
   if (error) {
-    Serial.println(F("Parsing update failed!"));
+    Serial.print(F("Parsing update failed!")); Serial.println( error.c_str() );
+    doc.clear();
     webClient.disconnect();
     return false;
   }
   JsonObject root = doc.as<JsonObject>();
-  data.heading = root["h"];
+  data.bearing = root["b"];
   data.thrust = root["t"];
   data.time = root["tm"];
+  data.active = root["a"];
+  Serial.print(F("DATA: ")); Serial.println(  data.active );
   data.manual = root["mn"];
+  doc.clear();
   webClient.disconnect();
-  setCourse( data.heading, data.thrust);
   return true;
 }
 
@@ -132,6 +128,8 @@ bool Vessel::getWaypoint() {
   if ( ! webClient.connect()) {
     return false;
   }
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
+  Serial.print(F("GETTING WAYPOINTS: "));
   boolean result = webClient.sendHttp( WebClient::WAYPOINT, false, url );
   if ( !result ) {
     webClient.disconnect();
@@ -141,18 +139,21 @@ bool Vessel::getWaypoint() {
   DynamicJsonDocument doc(capacity);
   DeserializationError error = deserializeJson(doc, webClient.client);
   if (error) {
-    Serial.println(F("Parsing update failed!"));
+    Serial.print(F("Parsing Waypoint failed!")); Serial.println( error.c_str() );
+   doc.clear();
     webClient.disconnect();
     return false;
   }
   JsonObject root = doc.as<JsonObject>();
-
   if ( root.size() < 1 ) {
     webClient.disconnect();
     stop();
+    doc.clear();
     return false;
   }
   int index = root[F("i")];
+  if ( index > sizeof( waypoints ))
+    return false;
   char* chr_arr = root[F("nm")];
   //sdcard.writeToIndex( WAYPOINTS_FILE, index, buffer );
   Waypoint wp;
@@ -163,6 +164,8 @@ bool Vessel::getWaypoint() {
   wp.last = root["last"];
   waypoints[index] = wp;
   webClient.disconnect();
+  doc.clear();
+  Serial.print(F("WAYPOINTS RECEIVED: ")); Serial.println(index);
   return true;
 }
 
@@ -170,74 +173,62 @@ bool Vessel::getWaypoint() {
    Send the current location and get a stack with the next steps to take.
    The first latlnh should be entered last, so that the can be popped
 */
-bool Vessel::updateWaypoints( ) {
+bool Vessel::updateWaypoints( int index ) {
   Serial.print(F("UPDATE WAYPOINTS: "));
-
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
   if ( ! webClient.connect()) {
     //webClient.disconnect();
     return false;
   }
   boolean result = false;
   if ( webClient.client.connected() ) {
-    result = webClient.sendHttp( WebClient::WAYPOINTS, false, "");
+    result = webClient.sendHttp( WebClient::WAYPOINTS, false, String( index ));
     if (!result ) {
       webClient.disconnect();
-      setCourse(0, 0);
       return result;
     }
 
-    size_t capacity = JSON_OBJECT_SIZE(9) + 100;
+    size_t capacity = JSON_OBJECT_SIZE(6) + 100;
     DynamicJsonDocument doc(capacity);
     DeserializationError error = deserializeJson(doc, webClient.client);
     if (error) {
-      Serial.println(F("Parsing update failed!"));
-      setCourse(0, 0);
+    Serial.print(F("Parsing update waypoints failed!")); Serial.println( error.c_str() );
+     doc.clear();
       webClient.disconnect();
       return false;
     }
     JsonObject root = doc.as<JsonObject>();
-    data.heading = root["h"];
-    data.thrust = root["t"];
-    data.time = root["tm"];
+    int i = root["i"];
+    char* chr_arr = root[F("nm")];
+    waypoints[i].name = String( chr_arr);
+    waypoints[i].latitude = root[F("la")];
+    waypoints[i].longitude = root[F("lo")];
+    waypoints[i].complete = root[F("cp")];
+    waypoints[i].last = root[F("last")];
+    doc.clear();
     webClient.disconnect();
+    Serial.print(F("WAYPOINTS RECEIVED: ")); Serial.println(index);
     result = true;
   }
-  setCourse( data.heading, data.thrust);
   return result;
 }
 
+//Is used in the loop function
 void Vessel::stop() {
-  Serial.println("\n\nSTOPPING!!!");
+  //Serial.println("\n\nSTOPPING!");
   controller.stop();
-  bearing = 0;
   speed = 0;
 }
 
-void Vessel::loop( double heading) {
-  if ( !enable )
+void Vessel::loop( double headng) {
+  heading = headng;
+  if (!enable || !data.active ) {
+    stop();
     return;
-  int calc = (int)(360 + data.heading - bearing); 
-  double diff = calc % 360;
-  double hd = ( data.manual ) ? angle : heading;
-  Serial.print(F("VESSEL: (")); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
+  }
+  //logger.println( "Course: " + heading );
+  double diff = (int)(heading - data.bearing);
+  double hd = ( data.manual ) ? angle : diff;
+  //Serial.print(F("VESSEL: (")); Serial.print( heading ); Serial.print( ", "); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
   controller.loop( hd, data.thrust );
 }
-
-/*
-  void Vessel::interrupt( unsigned int loopCounter ) {
-  //synchronize();
-  if ( !enable || ( loopCounter < LOOP_TIMEOUT ))
-    return;
-    Waypoint wp;
-    for( int i=0; i<MAX_WAYPOINTS; i++ ){
-      wp = waypoints[i];
-      if( wp.complete == true )
-        continue;
-      double distance = tinyGPS.getDistance( latitude, longitude, wp.latitude, wp.longitude );
-      double courseTo =   tinyGPS.getBearing( data.latitude, data.longitude, wp.latitude, wp.longitude );
-      double newThrust = ( wp.last && ( distance < range ))? (thrust*distance/range): thrust;
-      setCourse( courseTo, newThrust );
-    }
-  //getWaypoint();
-*/
-//}

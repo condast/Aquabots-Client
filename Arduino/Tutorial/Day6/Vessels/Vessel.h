@@ -19,11 +19,12 @@ class Vessel {
       int time;
       double latitude;//current position
       double longitude;
-      double heading;
+      double bearing;
       double thrust;
+      bool active;
       bool manual;
     };
-    
+
     struct Waypoint {
       String name;
       double latitude;
@@ -37,11 +38,10 @@ class Vessel {
     void setup();
     bool maintenance;
     bool initialise();
-    void setCourse( double bearing, double thrust );//returns true if the course is within the turn angle
     void setAutonomy( bool autonomy );
-    bool update( double latitude, double longitude, double bearing, double speed, bool updated );
+    bool update( double latitude, double longitude, bool updated );
     bool getWaypoint();
-    void loop( double bearing);
+    void loop( double heading);
     void interrupt( unsigned int loopCounter );
     void stop();
 
@@ -49,7 +49,7 @@ class Vessel {
     bool enable;
     double angle;
     bool initialised;
-    double bearing;//0-360
+    double heading;
     double speed;
     unsigned int range;//The range in between which a location has been reached
     VesselData data;
@@ -59,7 +59,7 @@ class Vessel {
     //Servo referenceServo; //The Anna uses two motors, of which this one controls the reference
     //Servo speedServo;  // create servo object to control the speed
     bool runMaintenance( unsigned int counter );
-    bool updateWaypoints();
+    bool updateWaypoints( int index );
 };
 
 #endif

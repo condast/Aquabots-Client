@@ -66,7 +66,7 @@ bool ServoController::isReady() {
    (181-360)  => 0 - 90
 */
 double ServoController::getCorrectedAngle( double a ) {
-  return ( a <= 180 ) ? map( a, 0, 180, 90, 180) : map( a, 180, 360, 0, 90);
+  return 90 + a;
 }
 
 /**
@@ -83,18 +83,6 @@ void ServoController::loop( double a, double t) {
   angle = getCorrectedAngle( a);
   thrust = map( t, -100, 100, 0, 180 );
   Serial.print(F("\n\nCourse: (")); Serial.print( angle); Serial.print(F(", ")); Serial.println( thrust);
-
-  //compass.loop();
-  //if ( compass.isEnabled() ) {
-  //  heading = compass.getFiltered();
-  //} else if ( tendof.isEnabled() ) {
-  //  heading = tendof.getHeading();
-  //} else {
-  //heading = heading;
-  //}
-  //double diff = heading - heading;
-  //erial.print(F("\n\nCorrecting: ")); Serial.println( diff + heading_offset);
-  //int newheading = map(( heading_offset + diff ), 0, 360, clipRange, 180 - clipRange );
   headingServo.write( angle + heading_offset );
   thrustServo.write( thrust + thrust_offset );
 }

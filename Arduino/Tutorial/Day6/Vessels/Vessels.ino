@@ -2,6 +2,7 @@
 
 #include "WebClient.h"
 #include "Registration.h"
+#include "Field.h"
 #include "TinyGPS.h"
 #include "Vessel.h"
 #include "ServoController.h"
@@ -9,7 +10,9 @@
 #include "Options.h"
 #include "Logger.h"
 #include "Data.h"
-#include "IMU_10DoF.h";
+#include "CompassBMM150.h"
+#include "IMU_10DoF.h"
+#include "Voltage.h"
 
 #define VESSEL_ID F("org.rdm.coe.shuang.ma")
 #define VESSEL F("Shuang Ma")
@@ -21,13 +24,16 @@
 
 static WebClient webClient;
 static Registration registration;
+static Field field;
 static TinyGPS gps;
-static Imu10DoF imu10dof;
+static CompassBMM150 compassModule;
+static Imu10DoF imu10dofModule;
 static Vessel vessel;
 static Interrupts interrupt;
 static Options options;
 static Logger logger;
 static Data data;
+static Voltage voltage;
 
 long vesselId;
 int load;
@@ -40,7 +46,9 @@ void setup() {
   interrupt.setup();
   registration.setup();
   gps.setup();
-  imu10dof.setup();
+  field.setup();
+  compassModule.setup();
+  imu10dofModule.setup();
   options.setup();
   logger.setup();
   vessel.setup();
@@ -48,8 +56,10 @@ void setup() {
 }
 
 void loop() {
-  gps.loop( vesselId >= 0);
-  imu10dof.loop();
+  bool enabled = ( vesselId >= 0);
+  gps.loop( enabled );
+  compassModule.loop();
+  imu10dofModule.loop();
   if ( interrupt.getSecondsFlank()) {
     interrupt.clearSecondsFlank();
     load = ( load + 1 ) % 120;
@@ -71,16 +81,31 @@ void loop() {
         delay(1000);
         break;
       case 1:
+        if( enabled )
+          field.loop( gps.getLatitude(), gps.getLongitude());
         logger.setup();
         //Serial.println( "LOGGER SETUP COMPLETE" );
         break;
       case 2:
         //Serial.println( "Aquabots message" );
-        logger.println("HELLO AQUABOTS");
+        logger.println(F("HELLO AQUABOTS"));
+        break;
+      case 3:
+        //Serial.println( "Aquabots message" );
+        compassModule.output();
+        String str = F("COMPASS:");
+        str += compassModule.getHeading();
+        logger.println( str );
+        voltage.loop();
+        break;
+      case 8:
+        if( enabled )
+          vessel.getWaypoint();
+        //Serial.println( "OPTIONS RECEIVED" );
         break;
       case 9:
         options.getOptions();
-        //Serial.println( "OPTIONS RECEIVED" );
+        Serial.println( "OPTIONS RECEIVED" );
         break;
       default:
         break;
