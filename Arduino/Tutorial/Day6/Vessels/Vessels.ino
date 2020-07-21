@@ -11,8 +11,6 @@
 #include "Logger.h"
 #include "Data.h"
 #include "CompassBMM150.h"
-#include "IMU_10DoF.h"
-#include "Voltage.h"
 
 #define VESSEL_ID F("org.rdm.coe.shuang.ma")
 #define VESSEL F("Shuang Ma")
@@ -27,13 +25,11 @@ static Registration registration;
 static Field field;
 static TinyGPS gps;
 static CompassBMM150 compassModule;
-static Imu10DoF imu10dofModule;
 static Vessel vessel;
 static Interrupts interrupt;
 static Options options;
 static Logger logger;
 static Data data;
-static Voltage voltage;
 
 long vesselId;
 int load;
@@ -48,7 +44,6 @@ void setup() {
   gps.setup();
   field.setup();
   compassModule.setup();
-  imu10dofModule.setup();
   options.setup();
   logger.setup();
   vessel.setup();
@@ -59,7 +54,6 @@ void loop() {
   bool enabled = ( vesselId >= 0);
   gps.loop( enabled );
   compassModule.loop();
-  imu10dofModule.loop();
   if ( interrupt.getSecondsFlank()) {
     interrupt.clearSecondsFlank();
     load = ( load + 1 ) % 120;
@@ -96,7 +90,6 @@ void loop() {
         String str = F("COMPASS:");
         str += compassModule.getHeading();
         logger.println( str );
-        voltage.loop();
         break;
       case 8:
         if( enabled )
