@@ -10,6 +10,9 @@ class Field {
       String name;
       double latitude;
       double longitude;
+      int length;
+      int width;
+      int angle;
     };
     boolean initialised;
     bool requestField(double latitude, double longitude);

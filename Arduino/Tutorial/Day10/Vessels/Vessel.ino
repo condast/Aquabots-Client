@@ -1,5 +1,5 @@
 //Constructor
-Vessel::Vessel() {};
+Vessel::Vessel(void) {};
 
 void Vessel::setup() {
   Serial.println(F("SETUP VESSEL" ));
@@ -66,7 +66,7 @@ bool Vessel::runMaintenance( unsigned int counter ) {
    The first latlnh should be entered last, so that the can be popped
 */
 bool Vessel::update( double latitde, double longitde, double voltage, bool updated ) {
-  //Serial.println(F("UPDATED: "));
+  Serial.println(F("UPDATED: "));
   if ( ! webClient.connect() )
     return false;
   webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
@@ -84,8 +84,8 @@ bool Vessel::update( double latitde, double longitde, double voltage, bool updat
   url += voltage;
   url += F("&u=");
   url += updated;
-  //Serial.print(F("UPDATE VESSEL: "));
-  //Serial.println( url);
+  Serial.print(F("UPDATE VESSEL: "));
+  Serial.println( url);
 
   boolean result = webClient.sendHttp( WebClient::UPDATE, false, url);
   if (!result ) {
@@ -99,9 +99,7 @@ bool Vessel::update( double latitde, double longitde, double voltage, bool updat
     return false;
   }
 
-  //String response = webClient.printResponse( WebClient::UPDATE );
-  //Serial.print(F("\n\nHEADING: \n")); Serial.println( response);
-  size_t capacity = JSON_OBJECT_SIZE(15) + 80;
+  size_t capacity = JSON_OBJECT_SIZE(15) + MESSAGE_SIZE_UPDATE;
   DynamicJsonDocument doc(capacity);
   DeserializationError error = deserializeJson(doc, webClient.client);
   if (error) {
@@ -115,8 +113,11 @@ bool Vessel::update( double latitde, double longitde, double voltage, bool updat
   data.thrust = root["t"];
   data.time = root["tm"];
   data.active = root["a"];
-  //Serial.print(F("DATA: ")); Serial.println(  data.active );
   data.manual = root["mn"];
+  //Serial.print(F("DATA: ")); Serial.println(  data.active );
+  //Serial.print(F("MANUAL: ")); Serial.println(  data.manual );
+  //Serial.print(F("BEARING: ")); Serial.println(  data.bearing );
+  //Serial.print(F("THRUST: ")); Serial.println(  data.thrust );
   doc.clear();
   webClient.disconnect();
   return true;

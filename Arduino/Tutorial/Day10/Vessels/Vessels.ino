@@ -9,8 +9,7 @@
 #include "SDCard.h"
 #include "Config.h"
 #include "Field.h"
-#include "TinyGPS.h"
-#include "Vessel.h"
+#include "TinyGPSSensor.h"
 #include "ServoController.h"
 #include "Interrupts.h"
 #include "Options.h"
@@ -19,6 +18,7 @@
 #include "CompassBMM150.h"
 #include "IMU_10DoF.h"
 #include "Voltage.h"
+#include "Vessel.h"
 
 #define VESSEL_ID F("org.rdm.coe.shuang.ma")
 #define VESSEL F("Shuang Ma")
@@ -33,15 +33,15 @@ static SDCard sdcard;
 static Registration registration;
 static Field field;
 static Config config;
-static TinyGPS gps;
+static TinyGPSSensor gps;
 static CompassBMM150 compassModule;
 static Imu10DoF imu10dofModule;
-static Vessel vessel;
 static Interrupts interrupt;
 static Options options;
 static Logger logger;
 static Data data;
 static Voltage voltage;
+static Vessel vessel;
 
 long vesselId;
 int load;
@@ -87,7 +87,7 @@ void loop() {
             Serial.print(F("REGISTRATION FAILED: ")); Serial.println( vesselId );
         } else {
           //Serial.print(F("VESSEL: ")); Serial.println( vesselId );
-          //vessel.loop( gps.getBearing());
+          vessel.loop( gps.getHeading());
         }
         delay(1000);
         break;
@@ -95,6 +95,7 @@ void loop() {
         if ( enabled )
           field.loop( gps.getLatitude(), gps.getLongitude());
         logger.setup();
+        vessel.update( gps.getLatitude(), gps.getLongitude(), voltage.getVoltage(), true );
         //Serial.println( "LOGGER SETUP COMPLETE" );
         break;
       case 2:
@@ -110,13 +111,13 @@ void loop() {
         logger.println( str );
         break;
       case 8:
-        if ( enabled )
-          vessel.getWaypoint();
+        //if ( enabled )
+         // vessel.getWaypoint();
         //Serial.println( "OPTIONS RECEIVED" );
         break;
       case 9:
         options.getOptions();
-        Serial.println( F("OPTIONS RECEIVED") );
+        //Serial.println( F("OPTIONS RECEIVED") );
         break;
       default:
         break;

@@ -93,8 +93,7 @@ bool Vessel::update( double latitde, double longitde, bool updated ) {
 
   //String response = webClient.printResponse( WebClient::UPDATE );
   //Serial.print(F("\n\nHEADING: \n")); Serial.println( response);
-
-  size_t capacity = JSON_OBJECT_SIZE(8) + 80;
+  size_t capacity = JSON_OBJECT_SIZE(15) + 80;
   DynamicJsonDocument doc(capacity);
   DeserializationError error = deserializeJson(doc, webClient.client);
   if (error) {
@@ -108,7 +107,7 @@ bool Vessel::update( double latitde, double longitde, bool updated ) {
   data.thrust = root["t"];
   data.time = root["tm"];
   data.active = root["a"];
-  Serial.print(F("DATA: ")); Serial.println(  data.active );
+  //Serial.print(F("DATA: ")); Serial.println(  data.active );
   data.manual = root["mn"];
   doc.clear();
   webClient.disconnect();
@@ -228,7 +227,7 @@ void Vessel::loop( double headng) {
   }
   //logger.println( "Course: " + heading );
   double diff = (int)(heading - data.bearing);
-  double hd = ( data.manual ) ? angle : diff;
-  //Serial.print(F("VESSEL: (")); Serial.print( heading ); Serial.print( ", "); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
+  double hd = ( data.manual ) ? data.bearing : diff;
+  //Serial.print(F("VESSEL: (")); Serial.print( heading ); Serial.print( " = "); Serial.print( hd ); Serial.print( ", "); Serial.print( data.thrust ); Serial.println( F(")"));
   controller.loop( hd, data.thrust );
 }

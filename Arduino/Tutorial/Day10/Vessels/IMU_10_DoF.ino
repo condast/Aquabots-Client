@@ -150,9 +150,8 @@ void Imu10DoF::loop() {
   pressure = bmp280.getPressure();//Get the temperature
   altitude = bmp280.calcAltitude(pressure); //Uncompensated caculation - in Meters
   atm = pressure / 101325;
-  Serial.print(F("IMU Board: t(")); Serial.print( temperature ); Serial.print(F("), P(")); Serial.print( pressure ); Serial.print(F("), alt(")); Serial.println( altitude );
-  Serial.print(F("Compass: ")); Serial.println( getHeading() );
+  //Serial.print(F("IMU Board: t(")); Serial.print( temperature ); Serial.print(F("), P(")); Serial.print( pressure ); Serial.print(F("), alt(")); Serial.println( altitude );
+  //Serial.print(F("Compass: ")); Serial.println( getHeading() );
   String str = "a=" + String( altitude ) + ";p=" + String( pressure ) + ";t=" + String( temperature );// + F(",c=") + pressure + 
   data.send(WebClient::DATA, IMU_10_DOF_ID, IMU_10_DOF, IMU_10_DOF_DATA, str );
-
 }

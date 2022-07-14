@@ -47,7 +47,6 @@ class Vessel {
 
   private:
     bool enable;
-    double angle;
     bool initialised;
     double heading;
     double speed;

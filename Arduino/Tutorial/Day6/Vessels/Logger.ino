@@ -40,6 +40,8 @@ boolean Logger::requestLog() {
    send a log message
 */
 boolean Logger::logMessage( String message ) {
+  if ( !options.isLogging())
+    return;
   webClient.connect();
   //Serial.print(F( "log request: ")); Serial.println( message );
   boolean result = webClient.sendHttp( WebClient::LOG, false, message );

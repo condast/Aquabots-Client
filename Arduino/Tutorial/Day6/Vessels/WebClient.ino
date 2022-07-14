@@ -3,7 +3,7 @@ WebClient::WebClient() {}
 void WebClient::setup() {
   host = CONDAST_URL;
   port = PORT;
-  context = AQUABOTS_REGISTRATION_CONTEXT;
+  context = AQUABOTS_VESSEL_CONTEXT;
 
   // start the Ethernet connection:
   Serial.print(F("SETUP WEB CLIENT: ")); Serial.println( ip );
@@ -44,28 +44,28 @@ void WebClient::disconnect() {
   connected = false;
 }
 
-void WebClient::setAuthentication( long i, String t ){
-    id = i;
-    token = t;
+void WebClient::setAuthentication( long i, String t ) {
+  id = i;
+  token = t;
 }
 
-void WebClient::setContext( String c ){
-  context = c;  
+void WebClient::setContext( String c ) {
+  context = c;
 }
 
 void WebClient::requestService( int request ) {
   switch ( request ) {
-    case REGISTER_VESSEL:
+    case REGISTER:
       client.print(F("register"));
       break;
-    case VESSEL_CONFIG:
-      client.print(F("config"));
+    case CONFIG:
+      client.print(F("get-config"));
       break;
     case DEBUG:
       client.print(F("debug"));
       break;
     case FIELD:
-      client.print(F("field"));
+      client.print(F("get-field"));
       break;
     case DATA:
       client.print(F("data"));
@@ -102,17 +102,17 @@ void WebClient::requestService( int request ) {
 */
 void WebClient::logRequestStr( int request ) {
   switch ( request ) {
-    case REGISTER_VESSEL:
+    case REGISTER:
       Serial.print(F("register"));
       break;
-    case VESSEL_CONFIG:
+    case CONFIG:
       Serial.print(F("config"));
       break;
     case DEBUG:
       Serial.print(F("debug"));
       break;
     case FIELD:
-      Serial.print(F("field"));
+      Serial.print(F("get-field"));
       break;
     case DATA:
       Serial.print(F("data"));
@@ -156,10 +156,10 @@ boolean WebClient::sendHttp( int request, String message ) {
 boolean WebClient::sendHttp( int request, boolean post, String attrs ) {
   if ( client.connected()) {
     //if ( request != NMEA )
-      //Serial.print(F("REQUEST ")); logRequestStr( request ); 
-     // Serial.print(F(" ?id")); Serial.print( id );
-      //Serial.print(F("&token")); Serial.print( token );
-      //Serial.print(F(" ")); Serial.println(attrs );
+    //Serial.print(F("REQUEST ")); logRequestStr( request );
+    // Serial.print(F(" ?id")); Serial.print( id );
+    //Serial.print(F("&token")); Serial.print( token );
+    //Serial.print(F(" ")); Serial.println(attrs );
     //logRequest( request, post, attrs );
 
     // Make a HTTP request:
@@ -204,6 +204,8 @@ bool WebClient::processResponse( int request ) {
   char http_ok[32] = {"\0"};
   strcpy( http_ok, "HTTP/1.1 200 OK");
   if (strcmp(status, http_ok) != 0) {
+    if ( request == NMEA )
+      return;
     Serial.print(F( "Unexpected response (" )); logRequestStr( request); Serial.print(F( "):" ));
     Serial.println(status);
     return false;
@@ -216,6 +218,18 @@ bool WebClient::processResponse( int request ) {
     return false;
   }
   return true;
+}
+
+String WebClient::createURL( double latitude, double longitude ) {
+  String url = F("&id=");
+  url += String( id );
+  url += F("&token=");
+  url += String( token);
+  //url += F("&latitude=");
+  //url += String( latitude);
+  //url += F("&longitude=");
+  //url += String( longitude);
+  return url;
 }
 
 void WebClient::logRequest( int request, boolean post, String attrs ) {
