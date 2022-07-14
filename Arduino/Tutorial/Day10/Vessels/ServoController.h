@@ -16,9 +16,9 @@
 #define TURN_OFFSET F("TURN_OFFSET") //-5
 #define CLIP_RANGE F("CLIP_RANGE")
 
-//The PWM outputs are the orange connectors on the Ethernet shield
-#define PWM_OUT_HEADING 4 //White grove connection  (green)
-#define PWM_OUT_SPEED   5 //Yellow grove connection (orange)
+//The PWM outputs are the white  and yellow connectors on the Grove shield
+#define PWM_OUT_HEADING 4 //White grove connection  
+#define PWM_OUT_SPEED   5 //Yellow grove connection
 
 #define MIN_SERVO 10   // 32 USV_RDM
 #define MAX_SERVO 170 // 160 USV_RDM

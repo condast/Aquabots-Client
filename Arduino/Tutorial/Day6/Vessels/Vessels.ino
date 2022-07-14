@@ -1,3 +1,4 @@
+#define ARDUINOJSON_USE_LONG_LONG 1
 #include <ArduinoJson.h>
 
 #include "WebClient.h"
@@ -98,7 +99,7 @@ void loop() {
         break;
       case 9:
         options.getOptions();
-        Serial.println( "OPTIONS RECEIVED" );
+        Serial.println( F("OPTIONS RECEIVED") );
         break;
       default:
         break;

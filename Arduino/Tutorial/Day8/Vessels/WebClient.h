@@ -4,8 +4,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 
-#define AQUABOTS_REGISTRATION_CONTEXT F("/arnac/registration/")
-#define AQUABOTS_VESSEL_CONTEXT F("/arnac/rest/")
+#define AQUABOTS_VESSEL_CONTEXT F("/arnac/rest/vessel/")
 #define AQUABOTS_OPTIONS_CONTEXT F("/arnac/rest/options/")
 #define CONDAST_URL F("www.condast.com")
 
@@ -13,15 +12,15 @@ const unsigned long HTTP_TIMEOUT = 5000;// max respone time from server
 
 //Condast SERVER
 // Set the static IP address to use if the DHCP fails to assign
-const char server[] = "www.condast.com";
-IPAddress ip(79, 170, 90, 5);
-const int PORT = 8080;
+//const char server[] = "www.condast.com";
+//IPAddress ip(79, 170, 90, 5);
+//const int PORT = 8080;
 
 //LOCALHOST DEVENTER
 // Set the static IP address to use if the DHCP fails to assign
-//IPAddress server(192, 168, 178, 41);
-//IPAddress ip(192, 168, 178, 41);
-//const int PORT = 10080;
+IPAddress server(192, 168, 178, 41);
+IPAddress ip(192, 168, 178, 41);
+const int PORT = 10080;
 
 //LOCALHOST EVOLUON
 // Set the static IP address to use if the DHCP fails to assign

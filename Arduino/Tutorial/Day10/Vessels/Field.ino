@@ -33,9 +33,8 @@ bool Field::requestField( double latitude, double longitude) {
       webClient.disconnect();
       return false;
     }
-    JsonObject root = doc[F("coordinates")];
-
-    String str = root[F("id")];
+    JsonObject root = doc.as<JsonObject>();
+    String str = root[F("name")];
     field.name = str;
     field.latitude = root[F("latitude")];
     field.longitude = root[F("longitude")];

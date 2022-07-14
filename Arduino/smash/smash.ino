@@ -17,7 +17,7 @@
 
 //#define DEBUG 1
 Interrupts interrupt2;
-SDCard sdcard;
+//SDCard sdcard;
 WebClient webClient;
 Logger logger;
 Vessel vessel;

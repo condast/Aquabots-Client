@@ -2,7 +2,7 @@
 
 #include "WebClient.h"
 #include "Registration.h"
-#include "TinyGPS.h"
+#include "VesselGPS.h"
 #include "Vessel.h"
 
 #define VESSEL F("AquaBoat")
@@ -18,7 +18,7 @@
 //SoftwareSerial Serial1(2, 3); // RX, TX
 static WebClient webClient;
 static Registration registration;
-static TinyGPS gps;
+static VesselGPS gps;
 static Vessel vessel;
 
 long vesselId;
@@ -34,7 +34,7 @@ void setup() {
 }
 
 void loop() {
-  gps.loop();
+  gps.loop( true );
   if ( vesselId < 0 ) {
     vesselId =  registration.registerVessel( VESSEL, PASSPHRASE, gps.getLatitude(), gps.getLongitude() );
     if ( vesselId > 0 ) {
