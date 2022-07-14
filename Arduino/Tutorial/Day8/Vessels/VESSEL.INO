@@ -65,21 +65,23 @@ bool Vessel::runMaintenance( unsigned int counter ) {
    Send the current location and get a stack with the next steps to take.
    The first latlnh should be entered last, so that the can be popped
 */
-bool Vessel::update( double latitde, double longitde, bool updated ) {
+bool Vessel::update( double latitude, double longitude, bool updated ) {
   //Serial.println(F("UPDATED: "));
   if ( ! webClient.connect() )
     return false;
   webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
-  data.latitude = latitde;
-  data.longitude = longitde;
+  data.latitude = latitude;
+  data.longitude = longitude;
   String url = F("&lo=");
-  url += String( longitde, 20 );
+  url += String( longitude, 20 );
   url += F("&la=");
-  url += String( latitde, 20);
+  url += String( latitude, 20);
   url += F("&h=");
   url += heading;
   url += F("&s=");
   url += speed;
+  url += F("&vt=");
+  url += voltage.getVoltage();
   url += F("&u=");
   url += updated;
   //Serial.print(F("UPDATE VESSEL: "));
@@ -110,6 +112,8 @@ bool Vessel::update( double latitde, double longitde, bool updated ) {
   data.active = root["a"];
   Serial.print(F("DATA: ")); Serial.println(  data.active );
   data.manual = root["mn"];
+  Serial.print(F("MANUAL: ")); Serial.println(  data.manual );
+  Serial.print(F("DIRECTION (")); Serial.print(  data.thrust ); Serial.print(  F(", ") ); Serial.print(  data.bearing ); Serial.println(  F(")") );
   doc.clear();
   webClient.disconnect();
   return true;

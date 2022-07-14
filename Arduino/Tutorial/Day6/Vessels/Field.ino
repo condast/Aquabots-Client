@@ -11,24 +11,21 @@ void Field::setup() {
    Request the field object
 */
 bool Field::requestField( double latitude, double longitude) {
-  webClient.setContext( AQUABOTS_REGISTRATION_CONTEXT );
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
   if ( !webClient.connect()) {
     return false;
   }
 
-  String url = F("&latitude=");
-  url += String( latitude);
-  url += F("&longitude=");
-  url += String( longitude);
-
-  boolean result = webClient.sendHttp( WebClient::REGISTER_VESSEL, false, url);
+  String url = webClient.createURL( latitude, longitude );
+  //Serial.println( url );
+  boolean result = webClient.sendHttp( WebClient::FIELD, false, url);
   FieldData field;
   if (!result ) {
     webClient.disconnect();
     return result;
   }
   if ( webClient.client.connected() ) {
-    size_t capacity = JSON_OBJECT_SIZE(5) + 100;
+    size_t capacity = JSON_OBJECT_SIZE(4) + JSON_OBJECT_SIZE(6) + 112;
     DynamicJsonDocument doc(capacity);
     DeserializationError error = deserializeJson(doc, webClient.client);
     if (error) {
@@ -36,13 +33,16 @@ bool Field::requestField( double latitude, double longitude) {
       webClient.disconnect();
       return false;
     }
-    JsonObject root = doc.as<JsonObject>();
+    JsonObject root = doc[F("coordinates")];
 
-    String str = root[F("name")];
-    field.name =  str;
+    String str = root[F("id")];
+    field.name = str;
     field.latitude = root[F("latitude")];
     field.longitude = root[F("longitude")];
-    Serial.print(F("Field retrieved: ")); Serial.println( str );
+    field.length = doc[F("length")]; // 100
+    field.width = doc[F("width")]; // 100
+    field.angle = doc[F("angle")];    
+    Serial.print(F("Field retrieved: ")); Serial.println( field.name );
     webClient.disconnect();
     initialised = true;
     return true;
@@ -52,9 +52,5 @@ bool Field::requestField( double latitude, double longitude) {
 }
 
 void Field::loop( double latitude, double longitude ) {
-  Serial.println(F("Field: updating"));
   bool result = requestField( latitude, longitude);
-  if (result) {
-    Serial.print(F("FIELD found: ")); Serial.println( field.name );
-  }
 }

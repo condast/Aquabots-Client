@@ -21,6 +21,7 @@ class Vessel {
       double longitude;
       double bearing;
       double thrust;
+      double voltage;
       bool active;
       bool manual;
     };

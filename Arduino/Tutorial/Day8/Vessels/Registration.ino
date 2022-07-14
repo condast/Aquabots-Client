@@ -10,7 +10,7 @@ long Registration::registerVessel( String vesselName, String passphrase, double 
   if ( !webClient.connect() )
     return -2;
 
-  webClient.setContext( AQUABOTS_REGISTRATION_CONTEXT ); 
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT ); 
   Serial.print(F("Registering Vessel: ")); Serial.println( vesselName );
   String url = F("&name=");
   url += String( webClient.urlencode( vesselName ));
@@ -20,6 +20,8 @@ long Registration::registerVessel( String vesselName, String passphrase, double 
   url += String( latitude);
   url += F("&longitude=");
   url += String( longitude);
+
+  Serial.print(F("Registering Vessel to: ")); Serial.println( url );
 
   boolean result = webClient.sendHttp( WebClient::REGISTER_VESSEL, false, url);
   if (!result ) {

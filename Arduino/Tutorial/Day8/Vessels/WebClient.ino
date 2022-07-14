@@ -3,7 +3,7 @@ WebClient::WebClient() {}
 void WebClient::setup() {
   host = CONDAST_URL;
   port = PORT;
-  context = AQUABOTS_REGISTRATION_CONTEXT;
+  context = AQUABOTS_VESSEL_CONTEXT;
 
   // start the Ethernet connection:
   Serial.print(F("SETUP WEB CLIENT: ")); Serial.println( ip );
@@ -162,10 +162,12 @@ boolean WebClient::sendHttp( int request, boolean post, String attrs ) {
       //Serial.print(F(" ")); Serial.println(attrs );
     //logRequest( request, post, attrs );
 
+    Serial.print(F("Sending request to: ")); Serial.print( server ); Serial.print(F(":")); Serial.print( port ); 
+    Serial.print( F("//")); WebClient::logRequestStr( request ); Serial.println( F(";")); 
+
     // Make a HTTP request:
     client.print( post ? F("POST ") : F("GET ") );
     client.print( context );
-    //Serial.print(F("context: ")); Serial.print( context );
     requestService( request );
     client.print(F("?id=" ));
     client.print( id );

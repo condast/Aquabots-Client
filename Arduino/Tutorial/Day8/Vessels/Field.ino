@@ -11,7 +11,7 @@ void Field::setup() {
    Request the field object
 */
 bool Field::requestField( double latitude, double longitude) {
-  webClient.setContext( AQUABOTS_REGISTRATION_CONTEXT );
+  webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
   if ( !webClient.connect()) {
     return false;
   }
