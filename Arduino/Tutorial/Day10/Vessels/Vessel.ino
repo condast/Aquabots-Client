@@ -66,7 +66,7 @@ bool Vessel::runMaintenance( unsigned int counter ) {
    The first latlnh should be entered last, so that the can be popped
 */
 bool Vessel::update( double latitde, double longitde, double voltage, bool updated ) {
-  Serial.println(F("UPDATED: "));
+  //Serial.println(F("UPDATED: "));
   if ( ! webClient.connect() )
     return false;
   webClient.setContext( AQUABOTS_VESSEL_CONTEXT );
